@@ -2,11 +2,11 @@ import { ResData } from "src/lib/resData";
 import { ICreateBrandDto } from "../dto/create-brand.dto";
 import { UpdateBrandDto } from "../dto/update-brand.dto";
 import { BrandEntity } from "../entities/brand.entity";
+import { IBrandEntityCount } from "./repository-interface";
 
 export interface IBrandService {
-    findAll(limit: number, page: number): Promise<ResData<Array<BrandEntity>>>;
+    findAll(word: string, limit: number, page: number): Promise<ResData<IBrandEntityCount>>;
     findOne(id: number): Promise<ResData<BrandEntity>>;
-    searchBrand(word: string):Promise<ResData<Array<BrandEntity>>>;
     create(file: Express.Multer.File, brand: ICreateBrandDto): Promise<ResData<BrandEntity>>;
     update(id: number, brand: UpdateBrandDto): Promise<ResData<BrandEntity>>;
     remove(entity: BrandEntity): Promise<ResData<BrandEntity>>;

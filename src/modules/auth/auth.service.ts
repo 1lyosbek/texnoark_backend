@@ -25,7 +25,7 @@ export class AuthService implements IAuthService {
 
   async login(dto: LoginDto): Promise<ResData<ILoginData>> {
     const { data: foundUser } = await this.userService.findOneByPhone(
-      dto.PhoneNumber,
+      dto.phone_number,
     );
 
     if (!foundUser) {

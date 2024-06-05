@@ -3,7 +3,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ResData } from 'src/lib/resData';
 import { CategoryEntity } from './entities/category.entity';
-import { ICategoryRepository } from './interface/repository-interface';
+import { ICategoryEntityCount, ICategoryRepository } from './interface/repository-interface';
 import { CategoryNotFound } from './exceptions/category.exception';
 import { ICategoryService } from './interface/service-interface';
 
@@ -12,21 +12,17 @@ export class CategoryService implements ICategoryService {
   constructor(@Inject("ICategoryRepository") private readonly categoryRepository: ICategoryRepository) {}
   async create(createCategoryDto: CreateCategoryDto):Promise<ResData<CategoryEntity>> {
     const newCategory = new CategoryEntity();
-    if (createCategoryDto.parent_category_id) {      
-      const {data: fonundCategory } = await this.findOne(createCategoryDto.parent_category_id);
-      newCategory.parent_category_id = fonundCategory;
-    }
     newCategory.name = createCategoryDto.name;
     const created = await this.categoryRepository.createCategory(newCategory);
     return new ResData<CategoryEntity>("Category created successfully", 201, created);
   }
 
-  async findAll(limit: number, page: number):Promise<ResData<Array<CategoryEntity>>> {
+  async findAll(word: string, limit: number, page: number):Promise<ResData<ICategoryEntityCount>> {
     limit = limit > 0 ? limit : 10;
     page = page > 0 ? page : 1;
     page = (page - 1) * limit;
-    const foundCategories = await this.categoryRepository.getCategories(limit, page);
-    return new ResData<Array<CategoryEntity>>("All available categories", 200, foundCategories);
+    const foundCategories = await this.categoryRepository.getCategories(word, limit, page);
+    return new ResData<ICategoryEntityCount>("All available categories", 200, {categories: foundCategories.categories, count: foundCategories.count});
   }
 
   async findOne(id: number):Promise<ResData<CategoryEntity>> {
@@ -35,11 +31,6 @@ export class CategoryService implements ICategoryService {
       throw new CategoryNotFound();
     }
     return new ResData<CategoryEntity>("Category found", 200, foundCategory);
-  }
-
-  async searchCategory(word: string):Promise<ResData<Array<CategoryEntity>>> {
-    const foundCategories = await this.categoryRepository.getCategoryByWord(word);
-    return new ResData<Array<CategoryEntity>>("Categories", 200, foundCategories);
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto):Promise<ResData<CategoryEntity>> {

@@ -4,7 +4,7 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { ResData } from 'src/lib/resData';
 import { BrandEntity } from './entities/brand.entity';
 import { IBrandService } from './interfaces/service-interface';
-import { IBrandRepository } from './interfaces/repository-interface';
+import { IBrandEntityCount, IBrandRepository } from './interfaces/repository-interface';
 import { BrandNotFound } from './exceptions/brand.exceptions';
 import { CategoryService } from '../category/category.service';
 
@@ -25,19 +25,14 @@ export class BrandService implements IBrandService {
     return new ResData<BrandEntity>("Brand created successfully", 201, created);
   } 
 
-  async findAll(limit: number, page: number):Promise<ResData<Array<BrandEntity>>> {
+  async findAll(word: string, limit: number, page: number): Promise<ResData<IBrandEntityCount>> {
     limit = limit > 0 ? limit : 10;
     page = page > 0 ? page : 1;
     page = (page - 1) * limit;
-    const foundBrands = await this.brandRepository.getBrands(limit, page);
-    return new ResData<BrandEntity[]>("All available brands", 200, foundBrands);
+    const foundBrands = await this.brandRepository.getBrands(word, limit, page);
+    return new ResData<IBrandEntityCount>("All available brands", 200, {brands: foundBrands.brands, count: foundBrands.count});
   }
-
-  async searchBrand(word: string): Promise<ResData<Array<BrandEntity>>>{
-    const foundCategories = await this.brandRepository.getByWord(word);
-    return new ResData<BrandEntity[]>("All available brands", 200, foundCategories);
-  }
-
+  
   async findOne(id: number):Promise<ResData<BrandEntity>> {
     const foundBrand = await this.brandRepository.getBrand(id);
     if (!foundBrand) {

@@ -1,23 +1,18 @@
 import { BaseEntity } from 'src/common/database/base.entity';
 import { BrandEntity } from 'src/modules/brand/entities/brand.entity';
+import { SubCategoryEntity } from 'src/modules/sub-category/entities/sub-category.entity';
 import { Entity, Column, OneToMany,  ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity("categories")
 export class CategoryEntity extends BaseEntity {
     @Column({ name: "name", type: "varchar", nullable: false })
     name: string;
-    @ManyToOne(
-        () => CategoryEntity,
-        (categoryEntity) => categoryEntity.categories,{onDelete: 'CASCADE', nullable: true}
-    )
-    @JoinColumn({name: "parent_category_id"})
-    parent_category_id: CategoryEntity;
 
     @OneToMany(
-        () => CategoryEntity,
-        (categoryEntity) => categoryEntity.parent_category_id, { onDelete: 'SET NULL', nullable: true }
+        () => SubCategoryEntity,
+        (subCategoryEntity) => subCategoryEntity.parent_category_id, { onDelete: 'SET NULL', nullable: true }
     )
-    categories: Array<CategoryEntity>;
+    categories: Array<SubCategoryEntity>;
 
     @OneToMany(
         () => BrandEntity,

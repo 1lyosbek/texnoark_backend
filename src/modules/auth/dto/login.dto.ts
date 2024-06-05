@@ -4,10 +4,12 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class LoginDto {
     @ApiProperty({
         type: String,
+        example: "+998335701001",
+        description: "Phone number for login"
     })
     @IsString()
     @IsNotEmpty()
-    PhoneNumber: string;
+    phone_number: string;
 
     @ApiProperty({
         type: String,

@@ -16,6 +16,12 @@ export class CategoryController {
   }
 
   @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'For search'
+  })
+  @ApiQuery({
     name: 'limit',
     required: false,
     type: Number,
@@ -28,21 +34,9 @@ export class CategoryController {
     description: 'For page'
   })
   @ApiOperation({ summary: "Get categories" })
-  @Get()
-  async findAll(@Query('limit') limit: number, @Query('page') page: number) {
-    return await this.categoryService.findAll(limit, page);
-  }
-
-  @ApiQuery({
-    name: 'search',
-    required: false,
-    type: String,
-    description: 'For search'
-  })
-  @ApiOperation({ summary: "Search category by category name"})
-  @Get('/search')
-  async searchByCategory(@Query('search') search: string,) {
-    return await this.categoryService.searchCategory(search);
+  @Get("search")
+  async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
+    return await this.categoryService.findAll(search, limit, page);
   }
 
   @ApiOperation({ summary: "Get category by id" })

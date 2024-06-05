@@ -7,9 +7,10 @@ import { UserModule } from './modules/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { connectionSource } from './common/config/database.config';
 import { BrandCategoryModule } from './modules/brand-category/brand-category.module';
+import { SubCategoryModule } from './modules/sub-category/sub-category.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(connectionSource), AuthModule, BrandModule, CategoryModule, AdminModule, UserModule, BrandCategoryModule],
+  imports: [TypeOrmModule.forRoot(connectionSource), AuthModule, BrandModule, CategoryModule, AdminModule, UserModule, BrandCategoryModule, SubCategoryModule],
   controllers: [],
   providers: [],
 })

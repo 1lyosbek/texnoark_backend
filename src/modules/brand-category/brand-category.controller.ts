@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Inject, Query } from '@nestjs/common';
 import { CreateBrandCategoryDto } from './dto/create-brand-category.dto';
 import { UpdateBrandCategoryDto } from './dto/update-brand-category.dto';
 import { IBrandCategoryService } from './interface/service-interface';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("brand-category")
 @Controller('brand-category')
@@ -15,10 +15,28 @@ export class BrandCategoryController {
     return await this.brandCategoryService.createBrandCategory(createBrandCategoryDto);
   }
 
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'For search'
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'For limit'
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'For page'
+  })
   @ApiOperation({ summary: "Get Brand Categories"})
-  @Get()
-  async findAll() {
-    return await this.brandCategoryService.findAllBrandCategories();
+  @Get('search')
+  async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
+    return await this.brandCategoryService.findAllBrandCategories(search, limit, page);
   }
 
   @ApiOperation({ summary: "Get Brand Category by id" })

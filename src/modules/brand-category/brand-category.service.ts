@@ -3,7 +3,7 @@ import { CreateBrandCategoryDto } from './dto/create-brand-category.dto';
 import { UpdateBrandCategoryDto } from './dto/update-brand-category.dto';
 import { ResData } from 'src/lib/resData';
 import { BrandCategoryEntity } from './entities/brand-category.entity';
-import { IBrandCategoryRepository } from './interface/repository-interface';
+import { IBrandCategoryEntityCount, IBrandCategoryRepository } from './interface/repository-interface';
 import { BrandService } from '../brand/brand.service';
 import { BrandCategoryNotFound } from './exceptions/brand-category.exceptions';
 import { IBrandCategoryService } from './interface/service-interface';
@@ -23,9 +23,9 @@ export class BrandCategoryService implements IBrandCategoryService{
     return new ResData<BrandCategoryEntity>("Brand Category created successfully", 201, created);
   }
 
-  async findAllBrandCategories(): Promise<ResData<Array<BrandCategoryEntity>>> {
-    const foundBrandCategories = await this.brandCategoryRepository.getBrandCategories();
-    return new ResData<BrandCategoryEntity[]>("All brand categories", 200, foundBrandCategories);
+  async findAllBrandCategories(word: string, limit: number, page: number): Promise<ResData<IBrandCategoryEntityCount>> {
+    const foundBrandCategories = await this.brandCategoryRepository.getBrandCategories(word, limit, page);
+    return new ResData<IBrandCategoryEntityCount>("All brand categories", 200, {brandCategories: foundBrandCategories.brandCategories, count: foundBrandCategories.count});
   }
 
   async findOneBrandCategory(id: number): Promise<ResData<BrandCategoryEntity>> {

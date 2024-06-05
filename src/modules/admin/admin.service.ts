@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { IAdminService } from './interfaces/server-interface';
-import { IAdminRepository } from './interfaces/repository-interface';
+import { IAdminEntityCount, IAdminRepository } from './interfaces/repository-interface';
 import { ResData } from 'src/lib/resData';
 import { AdminNotFound } from './exceptions/admin.exceptions';
 import { UserEntity } from '../user/entities/user.entity';
@@ -9,17 +9,12 @@ import { UserEntity } from '../user/entities/user.entity';
 @Injectable()
 export class AdminService implements IAdminService {
   constructor(@Inject("IAdminRepository") private readonly adminRepository: IAdminRepository) {}
-  async findAll(limit: number, page: number):Promise<ResData<UserEntity[]>> {
+  async findAll(word: string, limit: number, page: number): Promise<ResData<IAdminEntityCount>> {
     limit = limit > 0 ? limit : 10;
     page = page > 0 ? page : 1;
     page = (page - 1) * limit;
-    const foundAdmins = await this.adminRepository.getAdmins(limit, page);
-    return new ResData<UserEntity[]>("All available admins", 200, foundAdmins);
-  }
-
-  async searchAdmin(word: string): Promise<ResData<Array<UserEntity>>>{
-    const foundAdmins = await this.adminRepository.getAdminByWord(word);
-    return new ResData<UserEntity[]>("Admins", 200, foundAdmins);
+    const foundAdmins = await this.adminRepository.getAdmins(word, limit, page);
+    return new ResData<IAdminEntityCount>("All available admins", 200, {admins: foundAdmins.admins, count: foundAdmins.count});
   }
 
   async findOne(id: number): Promise<ResData<UserEntity>>{

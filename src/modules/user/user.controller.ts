@@ -8,6 +8,12 @@ import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 export class UserController {
   constructor(@Inject("IUserService") private readonly userService: IUserService) {}
   @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'For search'
+  })
+  @ApiQuery({
     name: 'limit',
     required: false,
     type: Number,
@@ -20,21 +26,9 @@ export class UserController {
     description: 'For page'
   })
   @ApiOperation({ summary: "Get all users"})
-  @Get()
-  async findAll(@Query('limit') limit: number, @Query('page') page: number) {
-    return await this.userService.findAll(limit, page);
-  }
-
-  @ApiQuery({
-    name: 'search',
-    required: false,
-    type: String,
-    description: 'For search'
-  })
-  @ApiOperation({summary: "Search user by first_name"})
-  @Get('/search')
-  async searchUser(@Query('search') search: string,) {
-    return await this.userService.searchUser(search);
+  @Get('search')
+  async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
+    return await this.userService.findAll(search, limit, page);
   }
 
   @ApiOperation({ summary: "Get one user by id"})

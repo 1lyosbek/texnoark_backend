@@ -1,15 +1,21 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { IBrandRepository } from "./interfaces/repository-interface";
+import { IBrandEntityCount, IBrandRepository } from "./interfaces/repository-interface";
 import { BrandEntity } from "./entities/brand.entity";
 import { ILike, Repository } from "typeorm";
 
 export class BrandRepository implements IBrandRepository {
     constructor(@InjectRepository(BrandEntity) private repository: Repository<BrandEntity>) {}
-    async getBrands(limit: number, offset: number): Promise<BrandEntity[]> {
-        return await this.repository.find({skip: offset, take: limit});
-    }
-    async getByWord(word: string): Promise<BrandEntity[]> {
-        return await this.repository.find({ where: { name: ILike(`%${word}%`) } });
+    async getBrands(word: string, limit: number, offset: number): Promise<IBrandEntityCount> {
+        let whereCondition = {};
+
+        if (word && word.trim() !== "") {
+            whereCondition = { name: ILike(`%${word}%`) };
+        }
+        const count = await this.repository.createQueryBuilder("brands")
+        .select("COUNT(*)", 'count')
+        .getRawOne();
+        const foundBrands = await this.repository.find({ where: whereCondition, skip: offset, take: limit});
+        return {brands: foundBrands, count: parseInt(count.count, 10)};
     }
     async getBrand(id: number): Promise<BrandEntity> {
         return await this.repository.findOneBy({id});

@@ -9,6 +9,12 @@ export class AdminController {
   constructor(@Inject("IAdminService") private readonly adminService: AdminService) {}
 
   @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'For search'
+  })
+  @ApiQuery({
     name: 'limit',
     required: false,
     type: Number,
@@ -21,21 +27,9 @@ export class AdminController {
     description: 'For page'
   })
   @ApiOperation({ summary: "Get all admins" })
-  @Get()
-  async findAll(@Query('limit') limit: number, @Query('page') page: number) {
-    return await this.adminService.findAll(limit, page);
-  }
-
-  @ApiQuery({
-    name: 'search',
-    required: false,
-    type: String,
-    description: 'For search'
-  })
-  @ApiOperation({ summary: "Search admin by first_name" })
-  @Get('/search')
-  async searchAdmin(@Query('search') search: string,) {
-    return await this.adminService.searchAdmin(search);
+  @Get('search')
+  async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
+    return await this.adminService.findAll(search, limit, page);
   }
 
   @ApiOperation({ summary: "Get admin by id" })

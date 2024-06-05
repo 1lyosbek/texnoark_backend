@@ -22,8 +22,8 @@ export class UserRegisterDto {
 
   @ApiProperty({
     type: String,
-    example: '1234567890',
-    description: 'The phone number of the admin for verification.',
+    example: '+998335701001',
+    description: 'The phone number for verification.',
   })
   @IsString()
   @IsNotEmpty()

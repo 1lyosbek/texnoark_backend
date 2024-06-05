@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { ILike, Repository } from "typeorm";
-import { IAdminRepository } from "./interfaces/repository-interface";
+import { IAdminEntityCount, IAdminRepository } from "./interfaces/repository-interface";
 import { UserEntity } from "../user/entities/user.entity";
 import { RoleEnum } from "src/common/enums/enums";
 
@@ -9,14 +9,20 @@ export class AdminRepository implements IAdminRepository {
     async createAdmin(admin: UserEntity): Promise<UserEntity> {
         return await this.repository.save(admin);
     }
-    async getAdmins(limit: number, offset: number): Promise<UserEntity[]> {
-        return await this.repository.find({skip: offset, take: limit, where: {role: RoleEnum.ADMIN}});
+    async getAdmins(word: string, limit: number, offset: number): Promise<IAdminEntityCount> {
+        let whereCondition = {};
+
+        if (word && word.trim() !== "") {
+            whereCondition = { name: ILike(`%${word}%`) };
+        }
+        const count = await this.repository.createQueryBuilder("users")
+            .select("COUNT(*)", 'count')
+            .getRawOne();
+        const foundAdmins = await this.repository.find({ skip: offset, take: limit, where: { role: RoleEnum.ADMIN, first_name: ILike(`%${word}%`) } });
+        return { admins: foundAdmins, count: parseInt(count.count, 10) }
     }
     async getAdmin(id: number): Promise<UserEntity> {
         return await this.repository.findOneBy({id:id, role: RoleEnum.ADMIN});
-    }
-    async getAdminByWord(word: string): Promise<UserEntity[]> {
-        return await this.repository.find({where: {role: RoleEnum.ADMIN, first_name: ILike(`%${word}%`)}});
     }
     async getAdminByPhoneNumber(phone: string): Promise<UserEntity> {
         return await this.repository.findOneBy({phone_number: phone});

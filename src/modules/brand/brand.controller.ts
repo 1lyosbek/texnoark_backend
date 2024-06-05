@@ -32,7 +32,12 @@ export class BrandController {
     return await this.brandService.create(file, dto);
   }
 
-
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'For search'
+  })
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -46,20 +51,9 @@ export class BrandController {
     description: 'For page'
   })
   @ApiOperation({ summary: "Get all brands" })
-  @Get()
-  async findAll(@Query('limit') limit: number, @Query('page') page: number) {
-    return await this.brandService.findAll(limit, page);
-  }
-  @ApiQuery({
-    name: 'search',
-    required: false,
-    type: String,
-    description: 'For search'
-  })
-  @ApiOperation({ summary: "Search brand by name" })
-  @Get('/search')
-  async searchByBrandName(@Query('search') search: string,) {
-    return await this.brandService.searchBrand(search);
+  @Get('search')
+  async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
+    return await this.brandService.findAll(search, limit, page);
   }
 
   @ApiOperation({ summary: "Get brand by id" })

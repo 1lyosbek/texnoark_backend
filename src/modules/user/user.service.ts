@@ -2,19 +2,19 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResData } from 'src/lib/resData';
 import { IUserService } from './interfaces/service-interface';
-import { IUserRepository } from './interfaces/repository-interface';
+import { IUserEntityCount, IUserRepository } from './interfaces/repository-interface';
 import { UserEntity } from './entities/user.entity';
 import { UserNotFound } from './exceptions/user.exceptions';
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(@Inject("IUserRepository") private readonly userRepository: IUserRepository) {}
-  async findAll(limit: number, page: number): Promise<ResData<Array<UserEntity>>> {
+  async findAll(word: string, limit: number, page: number): Promise<ResData<IUserEntityCount>> {
     limit = limit > 0 ? limit : 10;
     page = page > 0 ? page : 1;
     page = (page - 1) * limit;
-    const foundUsers = await this.userRepository.getUsers(limit, page);
-    return new ResData<Array<UserEntity>>("All available users", 200, foundUsers);
+    const foundUsers = await this.userRepository.getUsers(word, limit, page);
+    return new ResData<IUserEntityCount>("All available users", 200, {users: foundUsers.users, count: foundUsers.count});
   }
 
   async findOne(id: number): Promise<ResData<UserEntity>> {
@@ -35,11 +35,6 @@ export class UserService implements IUserService {
     return resData;
   }
   
-  async searchUser(word: string): Promise<ResData<Array<UserEntity>>> {
-    const foundUsers = await this.userRepository.getUserByWord(word);
-    return new ResData<Array<UserEntity>>("Users", 200, foundUsers);
-  }
-
   async update(id: number, updateUserDto: UpdateUserDto):Promise<ResData<UserEntity>> {
     const {data: foundUser} = await this.findOne(id);
     foundUser.first_name = updateUserDto.first_name;
