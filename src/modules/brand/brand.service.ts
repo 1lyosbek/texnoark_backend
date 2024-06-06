@@ -19,8 +19,8 @@ export class BrandService implements IBrandService {
     const newBrand = new BrandEntity();
     newBrand.name = createBrandDto.name;
     newBrand.description = createBrandDto.description;
-    newBrand.image = `http://localhost:7777/${file.path}`;
-    newBrand.category = foundCategory;
+    newBrand.image = `https://ecomapi.ilyosbekdev.uz/${file.path}`;
+    newBrand.category_id = foundCategory;
     const created = await this.brandRepository.createBrand(newBrand);
     return new ResData<BrandEntity>("Brand created successfully", 201, created);
   } 

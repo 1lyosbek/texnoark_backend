@@ -11,14 +11,12 @@ export class SubCategoryRepository implements ISubCategoryRepository {
         if (word && word.trim() !== "") {
             whereCondition = { name: ILike(`%${word}%`) };
         }
-        const count = await this.repository.createQueryBuilder("sub_category")
-            .select("COUNT(*)", 'count')
-            .getRawOne();
-        const foundSubCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit });
-        return { subcategories: foundSubCategories, count: parseInt(count.count, 10) };
+        const foundSubCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit, relations: ["parent_category_id"]});
+        const count = foundSubCategories.length;
+        return { subcategories: foundSubCategories, count };
     }
     async getSubCategory(id: number): Promise<SubCategoryEntity> {
-        return await this.repository.findOneBy({id});
+        return await this.repository.findOne({where: {id}, relations: ["parent_category_id"]});
     }
     async createSubCategory(entity: SubCategoryEntity): Promise<SubCategoryEntity> {
         return await this.repository.save(entity);

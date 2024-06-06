@@ -24,6 +24,9 @@ export class BrandCategoryService implements IBrandCategoryService{
   }
 
   async findAllBrandCategories(word: string, limit: number, page: number): Promise<ResData<IBrandCategoryEntityCount>> {
+    limit = limit > 0 ? limit : 10;
+    page = page > 0 ? page : 1;
+    page = (page - 1) * limit;
     const foundBrandCategories = await this.brandCategoryRepository.getBrandCategories(word, limit, page);
     return new ResData<IBrandCategoryEntityCount>("All brand categories", 200, {brandCategories: foundBrandCategories.brandCategories, count: foundBrandCategories.count});
   }

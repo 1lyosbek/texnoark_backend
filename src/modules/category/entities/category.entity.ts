@@ -1,5 +1,6 @@
 import { BaseEntity } from 'src/common/database/base.entity';
 import { BrandEntity } from 'src/modules/brand/entities/brand.entity';
+import { ProductEntity } from 'src/modules/products/entities/product.entity';
 import { SubCategoryEntity } from 'src/modules/sub-category/entities/sub-category.entity';
 import { Entity, Column, OneToMany,  ManyToOne, JoinColumn } from 'typeorm';
 
@@ -16,7 +17,10 @@ export class CategoryEntity extends BaseEntity {
 
     @OneToMany(
         () => BrandEntity,
-        (brandEntity) => brandEntity.category,
+        (brandEntity) => brandEntity.category_id,
     )
     brands: Array<BrandEntity>;
+
+    @OneToMany(() => ProductEntity, (productEntity) => productEntity.category_id)
+    products: ProductEntity[];
 }

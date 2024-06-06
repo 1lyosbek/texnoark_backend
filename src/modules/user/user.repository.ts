@@ -13,13 +13,11 @@ export class UserRepository implements IUserRepository {
         let whereCondition = {};
 
         if (word && word.trim() !== "") {
-            whereCondition = { name: ILike(`%${word}%`) };
+            whereCondition = { role: RoleEnum.USER , first_name: ILike(`%${word}%`) };
         }
-        const count = await this.repository.createQueryBuilder("users")
-            .select("COUNT(*)", 'count')
-            .getRawOne();
-        const foundUsers = await this.repository.find({skip: offset, take: limit, where: {role: RoleEnum.USER, first_name: ILike(`%${word}%`)}});
-        return {users: foundUsers, count: parseInt(count.count, 10)}
+        const foundUsers = await this.repository.find({skip: offset, take: limit, where: {role: RoleEnum.USER}});
+        const count = foundUsers.length;
+        return {users: foundUsers, count}
     }
     async getUserById (id: number): Promise<UserEntity> {
         return await this.repository.findOneBy({id:id, role: RoleEnum.USER});

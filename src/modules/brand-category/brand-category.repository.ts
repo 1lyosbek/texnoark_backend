@@ -11,14 +11,12 @@ export class BrandCategoryRepository implements IBrandCategoryRepository {
         if (word && word.trim() !== "") {
             whereCondition = { name: ILike(`%${word}%`) };
         }
-        const count = await this.repository.createQueryBuilder("brand_category")
-            .select("COUNT(*)", 'count')
-            .getRawOne();
-        const foundBrandCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit });
-        return { brandCategories: foundBrandCategories, count: parseInt(count.count, 10) };
+        const foundBrandCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit, relations: ["brand_id"]});
+        const count = foundBrandCategories.length;
+        return { brandCategories: foundBrandCategories, count};
     }
     async getBrandCategory(id: number): Promise<BrandCategoryEntity> {
-        return await this.repository.findOneBy({id});
+        return await this.repository.findOne({where: {id}, relations: ["brand_id"]});
     }
     async createBrandCategory(entity: BrandCategoryEntity): Promise<BrandCategoryEntity> {
         return await this.repository.save(entity);

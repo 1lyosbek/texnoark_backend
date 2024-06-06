@@ -24,7 +24,7 @@ async function bootstrap() {
   );
 
   const options = new DocumentBuilder()
-    .setTitle('Supermarket basement')
+    .setTitle('Supermarket Texnoark')
     .setDescription('this is v1')
     .setVersion('1.0.0')
     .addTag('Supermarket')
