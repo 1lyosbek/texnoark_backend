@@ -6,7 +6,7 @@ import { ISubCategoryEntityCount, ISubCategoryRepository } from './interfaces/re
 import { ResData } from 'src/lib/resData';
 import { SubCategoryEntity } from './entities/sub-category.entity';
 import { CategoryService } from '../category/category.service';
-import { SubCategoryNotFound } from './exceptions/sub-category.exceptions';
+import { ParentCategoryIdLengthNotFound, SubCategoryNotFound } from './exceptions/sub-category.exceptions';
 
 @Injectable()
 export class SubCategoryService implements ISubCategoryService {
@@ -18,16 +18,20 @@ export class SubCategoryService implements ISubCategoryService {
     const {data: foundCategory } = await this.categoryService.findOne(createSubCategoryDto.parent_category_id);
     const newSubCategory = new SubCategoryEntity();
     newSubCategory.name = createSubCategoryDto.name;
-    newSubCategory.parent_category_id = foundCategory;
+    newSubCategory.parent_category_id = foundCategory.id;
     const created = await this.subCategoryRepository.createSubCategory(newSubCategory);
     return new ResData<SubCategoryEntity>("Sub category created successfully", 201, created);
   }
 
-  async findAllSubCategories(word: string, limit: number, page: number): Promise<ResData<ISubCategoryEntityCount>> {
+  async findAllSubCategories(id: number, word: string, limit: number, page: number): Promise<ResData<ISubCategoryEntityCount>> {
     limit = limit > 0 ? limit : 10;
     page = page > 0 ? page : 1;
     page = (page - 1) * limit;
-    const foundCategories = await this.subCategoryRepository.getSubCategories(word, limit, page);
+    const { data: foundCategory } = await this.categoryService.findOne(id);
+    const foundCategories = await this.subCategoryRepository.getSubCategories(id, word, limit, page);
+    if (foundCategories.subcategories.length === 0) {
+      throw new ParentCategoryIdLengthNotFound();
+    }
     return new ResData<ISubCategoryEntityCount>("Sub categories", 200, {subcategories: foundCategories.subcategories, count: foundCategories.count});
   }
 
@@ -43,7 +47,7 @@ export class SubCategoryService implements ISubCategoryService {
     const { data: foundCategory } = await this.categoryService.findOne(updateSubCategoryDto.parent_category_id);
     const { data: foundSubCategory } = await this.findOneSubCategory(id);
     foundSubCategory.name = updateSubCategoryDto.name;
-    foundSubCategory.parent_category_id = foundCategory;
+    foundSubCategory.parent_category_id = foundCategory.id;
     const updated = await this.subCategoryRepository.updateSubCategory(foundSubCategory);
     return new ResData<SubCategoryEntity>("Sub category updated successfully", 200, updated);
   }

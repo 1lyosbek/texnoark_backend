@@ -9,11 +9,11 @@ export class CategoryEntity extends BaseEntity {
     @Column({ name: "name", type: "varchar", nullable: false })
     name: string;
 
-    @OneToMany(
-        () => SubCategoryEntity,
-        (subCategoryEntity) => subCategoryEntity.parent_category_id, { onDelete: 'SET NULL', nullable: true }
-    )
-    categories: Array<SubCategoryEntity>;
+    // @OneToMany(
+    //     () => SubCategoryEntity,
+    //     (subCategoryEntity) => subCategoryEntity.parent_category_id, { onDelete: 'SET NULL', nullable: true }
+    // )
+    // categories: Array<SubCategoryEntity>;
 
     @OneToMany(
         () => BrandEntity,

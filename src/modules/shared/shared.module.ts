@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { config } from 'src/common/config/config';
 import { JwtStrategy } from './guards/auth/jwt.strategy';
 import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 
 @Module({
     imports: [
@@ -12,7 +13,15 @@ import { UserService } from '../user/user.service';
           signOptions: { expiresIn: config.jwtExpiresIn },
         }),
       ],
-    providers: [UserService, JwtStrategy],
-    exports: [UserService, JwtStrategy]
+    providers: [
+      {provide: "IUserService", useClass: UserService },
+      {provide: "IUserRepository", useClass: UserRepository},
+      JwtStrategy
+    ],
+    exports: [
+    { provide: "IUserService", useClass: UserService },
+    { provide: "IUserRepository", useClass: UserRepository },
+    JwtStrategy
+  ]
 })
 export class SharedModule { }

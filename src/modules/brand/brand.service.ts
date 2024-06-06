@@ -41,6 +41,16 @@ export class BrandService implements IBrandService {
     return new ResData<BrandEntity>("Brand found", 200, foundBrand);
   }
 
+  async findOneByName(name: string): Promise<ResData<BrandEntity | null>> {
+    const foundBrandByName = await this.brandRepository.getBrandByName(name);
+    const resData = new ResData<BrandEntity>("Brand found by name", 200, foundBrandByName)
+    if (!foundBrandByName) {
+      resData.message = "Brand not found by name";
+      resData.statusCode = 404;
+    }
+    return resData;
+  }
+
   async update(id: number, updateBrandDto: UpdateBrandDto):Promise<ResData<BrandEntity>> {
     const {data: foundBrand } = await this.findOne(id);
     foundBrand.name = updateBrandDto.name;

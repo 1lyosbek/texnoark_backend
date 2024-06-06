@@ -10,6 +10,9 @@ export interface IConfig {
     dbPassword: string;
     jwtKey: string;
     jwtExpiresIn: string;
+    jwtRefreshKey: string;
+    jwtRefreshExpiresIn: string;
+    jwtCookieTime: number;
 }
 
 export interface ICurrentUser {

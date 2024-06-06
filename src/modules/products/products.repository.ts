@@ -9,10 +9,16 @@ export class ProductRepository implements IProductRepository {
         let whereCondition = {};
         if (word && word.trim()!== "") {
             whereCondition = { name: ILike(`%${word}%`) };
+            const foundProducts = await this.repository.find({ where: whereCondition, skip: offset, take: limit });
+            const count = foundProducts.length;
+            return { products: foundProducts, count };
+        } else {
+            const foundProducts = await this.repository.find({ where: whereCondition, skip: offset, take: limit});
+            const count = await this.repository.createQueryBuilder('prducts')
+                .select('COUNT(*) count')
+                .getRawOne();
+            return {products: foundProducts, count: parseInt(count.count, 10)};
         }
-        const foundProducts = await this.repository.find({ where: whereCondition, skip: offset, take: limit});
-        const count = foundProducts.length;
-        return {products: foundProducts, count };
     }
     async getProduct(id: number): Promise<ProductEntity> {
         return await this.repository.findOneBy({id});

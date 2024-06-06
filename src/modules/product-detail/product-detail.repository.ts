@@ -17,7 +17,7 @@ export class ProductDetailRepository implements IProductDetailRepository {
     async updateProductDetail(productDetail: ProductDetailEntity): Promise<ProductDetailEntity> {
         return await this.repository.save(productDetail);
     }
-    async deleteProductDetail(productDetail: ProductDetailEntity): Promise<ProductDetailEntity> {
+    async deleteProductDetail(productDetail: ProductDetailEntity): Promise<ProductDetailEntity> { 
         return await this.repository.remove(productDetail);
     }
 }

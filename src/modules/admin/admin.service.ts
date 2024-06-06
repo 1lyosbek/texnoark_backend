@@ -5,6 +5,7 @@ import { IAdminEntityCount, IAdminRepository } from './interfaces/repository-int
 import { ResData } from 'src/lib/resData';
 import { AdminNotFound } from './exceptions/admin.exceptions';
 import { UserEntity } from '../user/entities/user.entity';
+import { hashed } from 'src/lib/bcrypt';
 
 @Injectable()
 export class AdminService implements IAdminService {
@@ -41,7 +42,7 @@ export class AdminService implements IAdminService {
     foundAdmin.last_name = updateAdminDto.last_name;
     foundAdmin.phone_number = updateAdminDto.phone_number;
     foundAdmin.email = updateAdminDto.email;
-    foundAdmin.password =  updateAdminDto.password;
+    foundAdmin.password =  await hashed(updateAdminDto.password);
     const updated = await this.adminRepository.updateAdmin(foundAdmin);
     return new ResData<UserEntity>("Admin updated successfully", 200, updated);
   }

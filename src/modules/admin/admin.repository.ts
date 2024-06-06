@@ -14,10 +14,16 @@ export class AdminRepository implements IAdminRepository {
 
         if (word && word.trim() !== "") {
             whereCondition = { role: RoleEnum.ADMIN, first_name: ILike(`%${word}%`) };
+            const foundAdmins = await this.repository.find({ skip: offset, take: limit, where: { role: RoleEnum.ADMIN } });
+            const count = foundAdmins.length;
+            return { admins: foundAdmins, count }
+        } else {
+            const count = await this.repository.createQueryBuilder('users')
+                .select('COUNT(*) count')
+                .getRawOne();
+            const foundAdmins = await this.repository.find({ skip: offset, take: limit, where: {role: RoleEnum.ADMIN} });
+            return { admins: foundAdmins, count: parseInt(count.count, 10)};
         }
-        const foundAdmins = await this.repository.find({ skip: offset, take: limit, where: {role: RoleEnum.ADMIN} });
-        const count = foundAdmins.length;
-        return { admins: foundAdmins, count}
     }
     async getAdmin(id: number): Promise<UserEntity> {
         return await this.repository.findOneBy({id:id, role: RoleEnum.ADMIN});

@@ -2,18 +2,24 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ISubCategoryEntityCount, ISubCategoryRepository } from "./interfaces/repository-interface";
 import { SubCategoryEntity } from "./entities/sub-category.entity";
 import { ILike, Repository } from "typeorm";
+import { CategoryEntity } from "../category/entities/category.entity";
 
 export class SubCategoryRepository implements ISubCategoryRepository {
     constructor(@InjectRepository(SubCategoryEntity) private repository: Repository<SubCategoryEntity>) {}
-    async getSubCategories(word: string, limit: number, offset: number): Promise<ISubCategoryEntityCount> {
+    async getSubCategories(parent_id: number, word: string, limit: number, offset: number): Promise<ISubCategoryEntityCount> {
         let whereCondition = {};
-
         if (word && word.trim() !== "") {
-            whereCondition = { name: ILike(`%${word}%`) };
+            whereCondition = { parent_category_id: parent_id, name: ILike(`%${word}%`) };
+            const foundSubCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit});
+            const count = foundSubCategories.length;
+            return { subcategories: foundSubCategories, count };
+        } else {
+            const foundSubCategories = await this.repository.find({ where: { parent_category_id: parent_id }, skip: offset, take: limit});
+            const count = await this.repository.createQueryBuilder('sub_category')
+                .select('COUNT(*) count')
+                .getRawOne();
+            return { subcategories: foundSubCategories, count: parseInt(count.count, 10)};
         }
-        const foundSubCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit, relations: ["parent_category_id"]});
-        const count = foundSubCategories.length;
-        return { subcategories: foundSubCategories, count };
     }
     async getSubCategory(id: number): Promise<SubCategoryEntity> {
         return await this.repository.findOne({where: {id}, relations: ["parent_category_id"]});

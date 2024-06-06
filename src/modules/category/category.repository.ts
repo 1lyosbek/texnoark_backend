@@ -10,10 +10,16 @@ export class CategoryRepository implements ICategoryRepository{
 
         if (word && word.trim() !== "") {
             whereCondition = { name: ILike(`%${word}%`) };
+            const foundCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit });
+            const count = foundCategories.length;
+            return { categories: foundCategories, count };
+        } else {
+            const foundCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit});
+            const count = await this.repository.createQueryBuilder('categories')
+                .select('COUNT(*) count')
+                .getRawOne();
+            return {categories: foundCategories, count: parseInt(count.count, 10)};
         }
-        const foundCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit});
-        const count = foundCategories.length;
-        return {categories: foundCategories, count};
     }
     async getCategory(id: number): Promise<CategoryEntity> {
         return await this.repository.findOneBy({id});

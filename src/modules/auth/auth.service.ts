@@ -12,6 +12,8 @@ import { LoginDto } from './dto/login.dto';
 import { UserRegisterDto } from './dto/admin.dto';
 import { UserService } from '../user/user.service';
 import { UserRepository } from '../user/user.repository';
+import { config } from 'src/common/config/config';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -23,7 +25,7 @@ export class AuthService implements IAuthService {
     private jwtService: JwtService,
   ) { }
 
-  async login(dto: LoginDto): Promise<ResData<ILoginData>> {
+  async login(dto: LoginDto, res: Response): Promise<ResData<ILoginData>> {
     const { data: foundUser } = await this.userService.findOneByPhone(
       dto.phone_number,
     );
@@ -36,16 +38,22 @@ export class AuthService implements IAuthService {
     if (!compared) {
       throw new PhoneOrPasswordWrongException();
     }
-
-    const token = await this.jwtService.signAsync({ id: foundUser.id });
+    const access_token = await this.jwtService.signAsync({ id: foundUser.id });
+    const refresh_token = await this.jwtService.signAsync({ id: foundUser.id }, { secret: config.jwtRefreshKey, expiresIn: config.jwtRefreshExpiresIn });
+    foundUser.hashed_refresh_token = await hashed(refresh_token);
+    const updated = await this.adminRepository.updateAdmin(foundUser);
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      maxAge: config.jwtCookieTime,
+    });
 
     return new ResData<ILoginData>("User successfully logged in", HttpStatus.OK, {
-      admin: foundUser,
-      token,
+      data: foundUser,
+      tokens: {access_token, refresh_token},
     });
   }
 
-  async registerAdmin(dto: UserRegisterDto): Promise<ResData<UserEntity>> {
+  async registerAdmin(dto: UserRegisterDto, res: Response): Promise<ResData<ILoginData>> {
     const newAdmin = new UserEntity();
     newAdmin.first_name = dto.first_name;
     newAdmin.last_name = dto.last_name;
@@ -54,10 +62,19 @@ export class AuthService implements IAuthService {
     newAdmin.email = dto.email;
     newAdmin.password = await hashed(dto.password);
     const savedAdmin = await this.adminRepository.createAdmin(newAdmin);
-    return new ResData<UserEntity>("Admin created successfully", HttpStatus.CREATED, savedAdmin);
+    const access_token = await this.jwtService.signAsync({ id: savedAdmin.id });
+    const refresh_token = await this.jwtService.signAsync({ id: savedAdmin.id }, { secret: config.jwtRefreshKey, expiresIn: config.jwtRefreshExpiresIn });
+    const {data: foundUser } = await this.adminService.findOne(savedAdmin.id);
+    foundUser.hashed_refresh_token = await hashed(refresh_token);
+    const updated = await this.adminRepository.updateAdmin(foundUser);
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      maxAge: config.jwtCookieTime,
+    });
+    return new ResData<ILoginData>("Admin created successfully", HttpStatus.CREATED, { data: updated, tokens: { access_token, refresh_token} });
   }
 
-  async registerUser(dto: UserRegisterDto): Promise<ResData<UserEntity>> {
+  async registerUser(dto: UserRegisterDto, res: Response): Promise<ResData<ILoginData>> {
     const newUser = new UserEntity();
     newUser.first_name = dto.first_name;
     newUser.last_name = dto.last_name;
@@ -66,6 +83,15 @@ export class AuthService implements IAuthService {
     newUser.email = dto.email;
     newUser.password = await hashed(dto.password);
     const savedUser = await this.userRepository.createUser(newUser);
-    return new ResData<UserEntity>("User created successfully", HttpStatus.CREATED, savedUser);
+    const access_token = await this.jwtService.signAsync({ id: savedUser.id });
+    const refresh_token = await this.jwtService.signAsync({ id: savedUser.id }, { secret: config.jwtRefreshKey, expiresIn: config.jwtRefreshExpiresIn });
+    const { data: foundUser } = await this.adminService.findOne(savedUser.id);
+    foundUser.hashed_refresh_token = await hashed(refresh_token);
+    const updated = await this.adminRepository.updateAdmin(foundUser);
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      maxAge: config.jwtCookieTime,
+    });
+    return new ResData<ILoginData>("User created successfully", HttpStatus.CREATED, {data: updated, tokens: {access_token, refresh_token}});
   }
 }

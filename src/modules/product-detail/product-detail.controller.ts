@@ -26,7 +26,7 @@ export class ProductDetailController {
           items: {
             type: 'string',
           },
-          example: ['ko\'k', 'oq', 'qora'] 
+          example: ['blue', 'white', 'black'] 
         },
 
         product_id: { type: "number" },
@@ -40,7 +40,7 @@ export class ProductDetailController {
       },
     },
   })
-  @UseInterceptors(FilesInterceptor('files', 3, fileOptions))
+  @UseInterceptors(FilesInterceptor('files', 4, fileOptions))
   async create(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: any) {
     const dto: ICreateProductDetailDto = {
       ...body,

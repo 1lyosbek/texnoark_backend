@@ -5,6 +5,7 @@ import { IUserService } from './interfaces/service-interface';
 import { IUserEntityCount, IUserRepository } from './interfaces/repository-interface';
 import { UserEntity } from './entities/user.entity';
 import { UserNotFound } from './exceptions/user.exceptions';
+import { hashed } from 'src/lib/bcrypt';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -41,7 +42,7 @@ export class UserService implements IUserService {
     foundUser.last_name = updateUserDto.last_name;
     foundUser.phone_number = updateUserDto.phone_number;
     foundUser.email = updateUserDto.email;
-    foundUser.password =   updateUserDto.password;
+    foundUser.password = await hashed(updateUserDto.password);
     const updated = await this.userRepository.updateUser(foundUser); 
     return new ResData<UserEntity>("User updated successfully", 200, updated);
   }

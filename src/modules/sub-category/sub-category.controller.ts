@@ -34,9 +34,9 @@ export class SubCategoryController {
     description: 'For page'
   })
   @ApiOperation({ summary: "Get Sub Categories" })
-  @Get('search')
-  findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
-    return this.subCategoryService.findAllSubCategories(search, limit, page);
+  @Get('search/:parent_category_id')
+  findAll(@Param('parent_category_id') id: number, @Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
+    return this.subCategoryService.findAllSubCategories(id, search, limit, page);
   }
 
   @ApiOperation({ summary: "Get Sub Category by id" })

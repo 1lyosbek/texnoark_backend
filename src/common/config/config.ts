@@ -9,6 +9,9 @@ export const config: IConfig = {
     dbName: process.env.DATABASE,
     dbUser: process.env.DATABASE_USER,
     dbPassword: process.env.DATABASE_PASSWORD,
-    jwtKey: process.env.JWT_SECRET_KEY,
-    jwtExpiresIn: process.env.JWT_EXPIRATION
-}
+    jwtKey: process.env.JWT_ACCESS_SECRET_KEY,
+    jwtExpiresIn: process.env.JWT_ACCESS_EXPIRATION,
+    jwtRefreshKey: process.env.JWT_REFRESH_SECRET_KEY,
+    jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRATION,
+    jwtCookieTime: Number(process.env.COOKIE_TIME),
+};

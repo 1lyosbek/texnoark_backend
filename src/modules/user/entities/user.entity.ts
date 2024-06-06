@@ -21,6 +21,9 @@ export class UserEntity extends BaseEntity {
 
     @Column({ type: 'varchar', nullable: false })
     password: string;
+
+    @Column({ name: "hashed_refresh_token", type: 'varchar', nullable: true })
+    hashed_refresh_token: string;
 }
 
 

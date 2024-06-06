@@ -5,6 +5,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { fileOptions } from 'src/lib/fileOpitions';
 import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IBrandService } from './interfaces/service-interface';
+import { ThisBrandAlreadyExist } from './exceptions/brand.exceptions';
 
 @ApiTags('brand')
 @Controller('brand')
@@ -29,6 +30,10 @@ export class BrandController {
   })
   @UseInterceptors(FileInterceptor('file', fileOptions))
   async create(@UploadedFile() file: Express.Multer.File, @Body() dto: ICreateBrandDto) {
+    const {data: foundBrandByName } = await this.brandService.findOneByName(dto.name);
+    if (foundBrandByName) {
+      throw new ThisBrandAlreadyExist();
+    }
     return await this.brandService.create(file, dto);
   }
 
