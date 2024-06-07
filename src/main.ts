@@ -8,13 +8,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.enableCors({
-    origin: ['http://localhost:7777', 'https://ecomapi.ilyosbekdev.uz'],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Authorization',
-    exposedHeaders: 'Content-Type, Authorization',
-   });
+  app.enableCors();
 
   app.useBodyParser('json');
 
