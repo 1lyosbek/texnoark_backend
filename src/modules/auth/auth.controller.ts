@@ -23,11 +23,10 @@ export class AuthController {
   ) { }
 
   @ApiOperation({ summary: "Log In user or admin by phone number and password" })
-  @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
     const found = await this.authService.login(loginDto, res);
-    return found;
+    res.send(found)
   }
 
   @ApiOperation({ summary: "Create new admin" })
@@ -40,12 +39,13 @@ export class AuthController {
     if (foundAdmin) {
       throw new PhoneNumberAlreadyExist();
     }
-    return await this.authService.registerAdmin(createDto, res);
+    const createdAdmin = await this.authService.registerAdmin(createDto, res);
+    res.send(createdAdmin);
   }
-  
+
   @ApiOperation({ summary: "Create new user" })
   @Post('user/sign-up')
-  async registerUser(@Body() createDto: UserRegisterDto,  @Res() res: Response) {
+  async registerUser(@Body() createDto: UserRegisterDto, @Res() res: Response) {
     const { data: foundUser } = await this.userService.findOneByPhone(
       createDto.phone_number,
     );
@@ -53,6 +53,7 @@ export class AuthController {
     if (foundUser) {
       throw new PhoneNumberAlreadyExist();
     }
-    return await this.authService.registerUser(createDto, res);
+    const createdUser = await this.authService.registerUser(createDto, res);
+    res.send(createdUser);
   }
 }

@@ -13,7 +13,7 @@ export class BrandController {
   constructor(@Inject("IBrandService") private readonly brandService: IBrandService) {}
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: "Create new brand" })
-  @Post()
+  @Post('create')
   @ApiBody({
     schema: {
       type: "object",
@@ -61,6 +61,23 @@ export class BrandController {
     return await this.brandService.findAll(search, limit, page);
   }
 
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'For limit'
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'For page'
+  })
+  @ApiOperation({ summary: "Get brand by category id" })
+  @Get('category/:id')
+  async findByCategoryId(@Param('id', ParseIntPipe) id: number, @Query('limit') limit: number, @Query('page') page: number) {
+    return await this.brandService.findByCategoryId(id, limit, page);
+  }
   @ApiOperation({ summary: "Get brand by id" })
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -68,13 +85,13 @@ export class BrandController {
   }
 
   @ApiOperation({ summary: "Update brand by id" })
-  @Patch(':id')
+  @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateBrandDto: UpdateBrandDto) {
     return await this.brandService.update(id, updateBrandDto);
   }
 
   @ApiOperation({ summary: "Delete brand by id" })
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const {data: foundBrand } = await this.brandService.findOne(id);
     return this.brandService.remove(foundBrand);

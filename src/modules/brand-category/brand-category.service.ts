@@ -18,7 +18,7 @@ export class BrandCategoryService implements IBrandCategoryService{
     const {data: foundBrand} = await this.brandService.findOne(createBrandCategoryDto.brand_id);
     const newBrandCategory = new BrandCategoryEntity();
     newBrandCategory.name = createBrandCategoryDto.name;
-    newBrandCategory.brand_id = foundBrand;
+    newBrandCategory.brand_id = foundBrand.id;
     const created = await this.brandCategoryRepository.createBrandCategory(newBrandCategory);
     return new ResData<BrandCategoryEntity>("Brand Category created successfully", 201, created);
   }
@@ -29,6 +29,11 @@ export class BrandCategoryService implements IBrandCategoryService{
     page = (page - 1) * limit;
     const foundBrandCategories = await this.brandCategoryRepository.getBrandCategories(word, limit, page);
     return new ResData<IBrandCategoryEntityCount>("All brand categories", 200, {brandCategories: foundBrandCategories.brandCategories, count: foundBrandCategories.count});
+  }
+
+  async findByBrandId(brandId: number, limit: number, page: number): Promise<ResData<IBrandCategoryEntityCount>> {
+    const foundBrandCategories = await this.brandCategoryRepository.getByBrandId(brandId, limit, page);
+    return new ResData<IBrandCategoryEntityCount>("Found brand categories by brand id", 200, {brandCategories: foundBrandCategories.brandCategories, count: foundBrandCategories.count});
   }
 
   async findOneBrandCategory(id: number): Promise<ResData<BrandCategoryEntity>> {
@@ -43,7 +48,7 @@ export class BrandCategoryService implements IBrandCategoryService{
     const {data: foundBrandCategory} = await this.findOneBrandCategory(id);
     const { data: foundBrand } = await this.brandService.findOne(updateBrandCategoryDto.brand_id);
     foundBrandCategory.name = updateBrandCategoryDto.name;
-    foundBrandCategory.brand_id = foundBrand;
+    foundBrandCategory.brand_id = foundBrand.id;
     const updated = await this.brandCategoryRepository.updateBrandCategory(foundBrandCategory);
     return new ResData<BrandCategoryEntity>("Brand category updated successfully",200, updated);
   }

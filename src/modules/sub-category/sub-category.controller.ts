@@ -11,7 +11,7 @@ export class SubCategoryController {
   constructor(@Inject("ISubCategoryService") private readonly subCategoryService: ISubCategoryService) {}
 
   @ApiOperation({summary: "Create new Sub Category"})
-  @Post()
+  @Post('create')
   async create(@Body() createSubCategoryDto: CreateSubCategoryDto) {
     const {data: foundSubCategory } = await this.subCategoryService.findSubCategoryByName(createSubCategoryDto.name);
     if (foundSubCategory) {
@@ -52,13 +52,13 @@ export class SubCategoryController {
 
 
   @ApiOperation({ summary: "Update Sub Category by id" })
-  @Patch(':id')
+  @Patch('update/:id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateSubCategoryDto: UpdateSubCategoryDto) {
     return this.subCategoryService.updateSubCategory(id, updateSubCategoryDto);
   }
 
   @ApiOperation({ summary: "Delete Sub Category by id" })
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const { data: foundSubCategory } = await this.subCategoryService.findOneSubCategory(id);
     console.log(3);

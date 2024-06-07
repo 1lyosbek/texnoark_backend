@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/common/database/base.entity';
 import { BrandEntity } from 'src/modules/brand/entities/brand.entity';
 import { ProductEntity } from 'src/modules/products/entities/product.entity';
+import { StockEntity } from 'src/modules/stock/entities/stock.entity';
 import { SubCategoryEntity } from 'src/modules/sub-category/entities/sub-category.entity';
 import { Entity, Column, OneToMany,  ManyToOne, JoinColumn } from 'typeorm';
 
@@ -8,12 +9,6 @@ import { Entity, Column, OneToMany,  ManyToOne, JoinColumn } from 'typeorm';
 export class CategoryEntity extends BaseEntity {
     @Column({ name: "name", type: "varchar", nullable: false })
     name: string;
-
-    // @OneToMany(
-    //     () => SubCategoryEntity,
-    //     (subCategoryEntity) => subCategoryEntity.parent_category_id, { onDelete: 'SET NULL', nullable: true }
-    // )
-    // categories: Array<SubCategoryEntity>;
 
     @OneToMany(
         () => BrandEntity,
@@ -23,4 +18,10 @@ export class CategoryEntity extends BaseEntity {
 
     @OneToMany(() => ProductEntity, (productEntity) => productEntity.category_id)
     products: ProductEntity[];
+
+    @OneToMany(
+        () => StockEntity,
+        (stockEntity) => stockEntity.category_id,
+    )
+    stocks: Array<StockEntity>;
 }

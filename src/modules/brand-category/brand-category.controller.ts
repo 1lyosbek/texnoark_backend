@@ -10,7 +10,7 @@ export class BrandCategoryController {
   constructor(@Inject("IBrandCategoryService") private readonly brandCategoryService: IBrandCategoryService) {}
 
   @ApiOperation({summary: "Create new Brand Category"})
-  @Post()
+  @Post('create')
   async create(@Body() createBrandCategoryDto: CreateBrandCategoryDto) {
     return await this.brandCategoryService.createBrandCategory(createBrandCategoryDto);
   }
@@ -39,6 +39,23 @@ export class BrandCategoryController {
     return await this.brandCategoryService.findAllBrandCategories(search, limit, page);
   }
 
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'For limit'
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'For page'
+  })
+  @ApiOperation({ summary: "Get Brand Category by brand id" })
+  @Get('brand/:id')
+  async findByBrandId(@Param('id', ParseIntPipe) id: number, @Query('limit') limit: number, @Query('page') page: number) {
+    return await this.brandCategoryService.findByBrandId(id, limit, page);
+  }
   @ApiOperation({ summary: "Get Brand Category by id" })
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -46,13 +63,13 @@ export class BrandCategoryController {
   }
 
   @ApiOperation({ summary: "Update Brand Category by id" })
-  @Patch(':id')
+  @Patch('update/:id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateBrandCategoryDto: UpdateBrandCategoryDto) {
     return this.brandCategoryService.updateBrandCategory(id, updateBrandCategoryDto);
   }
 
   @ApiOperation({ summary: "Delete Brand Category by id" })
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const {data: foundBrandCategory} = await this.brandCategoryService.findOneBrandCategory(id);
     return this.brandCategoryService.removeBrandCategory(foundBrandCategory);

@@ -17,12 +17,18 @@ export class BrandRepository implements IBrandRepository {
             const count = await this.repository.createQueryBuilder('brands')
             .select('COUNT(*) count')
             .getRawOne();
-            const foundBrands = await this.repository.find({skip: offset, take: limit, relations: ["category_id"] });
+            const foundBrands = await this.repository.find({skip: offset, take: limit});
             return { brands: foundBrands, count: parseInt(count.count, 10)};
         }
     }
     async getBrand(id: number): Promise<BrandEntity> {
-        return await this.repository.findOne({ where: { id }, relations: ["category_id"] });
+        return await this.repository.findOne({ where: { id }});
+    }
+    async getByCategotyId(categoryId: number, limit: number, offset: number): Promise<IBrandEntityCount> {
+        const f = await this.repository.find({ where: { category_id: categoryId } });
+        const foundBrands = await this.repository.find({ where: {category_id: categoryId}, skip: offset, take: limit });
+        const count = f.length;
+        return { brands: foundBrands, count };
     }
     async getBrandByName(name: string): Promise<BrandEntity> {
         return await this.repository.findOneBy({ name });

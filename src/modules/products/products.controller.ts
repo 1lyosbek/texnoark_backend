@@ -11,7 +11,7 @@ export class ProductsController {
     @Inject("IProductService") private readonly productsService: ProductsService
   ) {}
   @ApiOperation({summary: "Create new product"})
-  @Post()
+  @Post('create')
   async create(@Body() createProductDto: CreateProductDto) {
     return await this.productsService.create(createProductDto);
   }
@@ -47,13 +47,13 @@ export class ProductsController {
   }
 
   @ApiOperation({ summary: "Update product by id" })
-  @Patch(':id')
+  @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
     return await this.productsService.update(id, updateProductDto);
   }
 
   @ApiOperation({ summary: "Delete product by id" })
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const { data: foundProduct } = await this.productsService.findOne(id);
     return this.productsService.remove(foundProduct.product);

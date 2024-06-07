@@ -10,7 +10,7 @@ export class CategoryController {
   constructor(@Inject("ICategoryService") private readonly categoryService: ICategoryService) {}
 
   @ApiOperation({ summary: "Create new category" })
-  @Post()
+  @Post('create')
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoryService.create(createCategoryDto);
   }
@@ -46,13 +46,13 @@ export class CategoryController {
   }
 
   @ApiOperation({ summary: "Update category by id" })
-  @Patch(':id')
+  @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateCategoryDto: UpdateCategoryDto) {
     return await this.categoryService.update(id, updateCategoryDto);
   }
 
   @ApiOperation({ summary: "Delete category by id" })
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const {data: foundCategory } = await this.categoryService.findOne(id);
     return this.categoryService.remove(foundCategory);

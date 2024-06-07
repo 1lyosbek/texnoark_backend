@@ -12,7 +12,7 @@ export class ProductDetailController {
   constructor(@Inject("IProductDetailService") private readonly productDetailService: ProductDetailService) {}
 
   @ApiOperation({summary: "Create new product detail"})
-  @Post()
+  @Post('create')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -59,13 +59,13 @@ export class ProductDetailController {
   }
 
   @ApiOperation({ summary: "Update product detail by id" })
-  @Patch(':id')
+  @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDetailDto: UpdateProductDetailDto) {
     return await this.productDetailService.update(id, updateProductDetailDto);
   }
 
   @ApiOperation({ summary: "Delete product detail by id"})
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const { data: foundProductDetail } = await this.findOne(id);
     return await this.productDetailService.remove(foundProductDetail);

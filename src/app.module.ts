@@ -12,6 +12,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { ProductDetailModule } from './modules/product-detail/product-detail.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { StockModule } from './modules/stock/stock.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       rootPath: join(__dirname, '..', 'upload'),
       serveRoot: '/upload',
     }),
-    TypeOrmModule.forRoot(connectionSource), AuthModule, BrandModule, CategoryModule, AdminModule, UserModule, BrandCategoryModule, SubCategoryModule, ProductsModule, ProductDetailModule],
+    TypeOrmModule.forRoot(connectionSource), AuthModule, BrandModule, CategoryModule, AdminModule, UserModule, BrandCategoryModule, SubCategoryModule, ProductsModule, ProductDetailModule, StockModule],
   controllers: [],
   providers: [],
 })

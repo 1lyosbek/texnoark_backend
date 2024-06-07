@@ -2,6 +2,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { IBrandCategoryEntityCount, IBrandCategoryRepository } from "./interface/repository-interface";
 import { ILike, Repository } from "typeorm";
 import { BrandCategoryEntity } from "./entities/brand-category.entity";
+import { ResData } from "src/lib/resData";
 
 export class BrandCategoryRepository implements IBrandCategoryRepository {
     constructor(@InjectRepository(BrandCategoryEntity) private repository: Repository<BrandCategoryEntity>) {}
@@ -23,6 +24,13 @@ export class BrandCategoryRepository implements IBrandCategoryRepository {
     }
     async getBrandCategory(id: number): Promise<BrandCategoryEntity> {
         return await this.repository.findOne({where: {id}, relations: ["brand_id"]});
+    }
+
+    async getByBrandId(brandId: number, limit: number, offset: number): Promise<IBrandCategoryEntityCount> {
+        const f = await this.repository.find({ where: { brand_id: brandId } });
+        const foundBrandCategories = await this.repository.find({ where: { brand_id: brandId }, skip: offset, take: limit });
+        const count = f.length;
+        return { brandCategories: foundBrandCategories, count };
     }
     async createBrandCategory(entity: BrandCategoryEntity): Promise<BrandCategoryEntity> {
         return await this.repository.save(entity);

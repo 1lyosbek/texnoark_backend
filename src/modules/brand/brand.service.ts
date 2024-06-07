@@ -20,7 +20,7 @@ export class BrandService implements IBrandService {
     newBrand.name = createBrandDto.name;
     newBrand.description = createBrandDto.description;
     newBrand.image = `https://ecomapi.ilyosbekdev.uz/${file.path}`;
-    newBrand.category_id = foundCategory;
+    newBrand.category_id = foundCategory.id;
     const created = await this.brandRepository.createBrand(newBrand);
     return new ResData<BrandEntity>("Brand created successfully", 201, created);
   } 
@@ -39,6 +39,11 @@ export class BrandService implements IBrandService {
       throw new BrandNotFound();
     }
     return new ResData<BrandEntity>("Brand found", 200, foundBrand);
+  }
+
+  async findByCategoryId(categoryId: number, limit: number, page: number): Promise<ResData<IBrandEntityCount>> {
+    const foundBrands = await this.brandRepository.getByCategotyId(categoryId, limit, page);
+    return new ResData<IBrandEntityCount>("Found brands by category id", 200, {brands: foundBrands.brands, count: foundBrands.count});
   }
 
   async findOneByName(name: string): Promise<ResData<BrandEntity | null>> {

@@ -38,13 +38,13 @@ export class UserController {
   }
 
   @ApiOperation({ summary: "Update user by id" })
-  @Patch(':id')
+  @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     return await this.userService.update(id, updateUserDto);
   }
 
   @ApiOperation({ summary: "Deleting user by id" })
-  @Delete(':id')
+  @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const {data: foundUser } = await this.userService.findOne(id);
     return await this.userService.remove(foundUser);
