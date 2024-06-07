@@ -2,7 +2,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ISubCategoryEntityCount, ISubCategoryRepository } from "./interfaces/repository-interface";
 import { SubCategoryEntity } from "./entities/sub-category.entity";
 import { ILike, Repository } from "typeorm";
-import { CategoryEntity } from "../category/entities/category.entity";
 
 export class SubCategoryRepository implements ISubCategoryRepository {
     constructor(@InjectRepository(SubCategoryEntity) private repository: Repository<SubCategoryEntity>) {}

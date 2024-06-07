@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ResData } from 'src/lib/resData';
@@ -7,16 +7,18 @@ import { IProductEntityCount, IProductRepository } from './interfaces/repository
 import { BrandService } from '../brand/brand.service';
 import { CategoryService } from '../category/category.service';
 import { BrandCategoryService } from '../brand-category/brand-category.service';
-import { IProductService } from './interfaces/server-interface';
+import { IProductDetailData, IProductService } from './interfaces/server-interface';
 import { ProductNotFound } from './exceptions/product.exceptions';
+import { ProductDetailService } from '../product-detail/product-detail.service';
 
 @Injectable()
 export class ProductsService implements IProductService {
   constructor(
     @Inject("IProductRepository") private readonly productRepository: IProductRepository,
-    @Inject("IBrandService") private readonly brandService: BrandService,
-    @Inject("ICategoryService") private readonly categoryService: CategoryService,
+    @Inject(forwardRef(() => "IBrandService")) private readonly brandService: BrandService,
+    @Inject(forwardRef(() => "ICategoryService")) private readonly categoryService: CategoryService,
     @Inject("IBrandCategoryService") private readonly brandCategoryService: BrandCategoryService,
+    @Inject("IProductDetailService") private readonly productDetailService: ProductDetailService
   ) {}
   async create(createProductDto: CreateProductDto): Promise<ResData<ProductEntity>> {
     const { data: foundCategory } = await this.categoryService.findOne(createProductDto.category_id);
@@ -40,12 +42,13 @@ export class ProductsService implements IProductService {
     return new ResData<IProductEntityCount>("Products", 200, {products: foundProducts.products, count: foundProducts.count});
   }
 
-  async findOne(id: number): Promise<ResData<ProductEntity>> {
+  async findOne(id: number): Promise<ResData<IProductDetailData>> {
     const foundProduct = await this.productRepository.getProduct(id);
     if (!foundProduct) {
       throw new ProductNotFound();
     }
-    return new ResData<ProductEntity>("Product found", 200, foundProduct);
+    const {data: foundProductDetail } = await this.productDetailService.findByProductId(id);
+    return new ResData<IProductDetailData >("Product found", 200, {product: foundProduct, product_detail: foundProductDetail});
   }
 
   async update(id: number, updateProductDto: UpdateProductDto): Promise<ResData<ProductEntity>> {
@@ -53,12 +56,12 @@ export class ProductsService implements IProductService {
     const { data: foundBrand } = await this.brandService.findOne(updateProductDto.brand_id);
     const { data: foundBrandCategory } = await this.brandCategoryService.findOneBrandCategory(updateProductDto.brand_category_id);
     const {data: foundProduct } = await this.findOne(id);
-    foundProduct.name = updateProductDto.name;
-    foundProduct.price = updateProductDto.price;
-    foundProduct.category_id = foundCategory;
-    foundProduct.brand_id = foundBrand;
-    foundProduct.brand_category_id = foundBrandCategory;
-    const updated = await this.productRepository.updateProduct(foundProduct);
+    foundProduct.product.name = updateProductDto.name;
+    foundProduct.product.price = updateProductDto.price;
+    foundProduct.product.category_id = foundCategory;
+    foundProduct.product.brand_id = foundBrand;
+    foundProduct.product.brand_category_id = foundBrandCategory;
+    const updated = await this.productRepository.updateProduct(foundProduct.product);
     return new ResData<ProductEntity>("Product updated successfully", 200, updated);
   }
 

@@ -13,7 +13,7 @@ export class ProductRepository implements IProductRepository {
             const count = foundProducts.length;
             return { products: foundProducts, count };
         } else {
-            const foundProducts = await this.repository.find({ where: whereCondition, skip: offset, take: limit});
+            const foundProducts = await this.repository.find({ where: whereCondition, skip: offset, take: limit });
             const count = await this.repository.createQueryBuilder('prducts')
                 .select('COUNT(*) count')
                 .getRawOne();

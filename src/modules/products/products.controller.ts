@@ -56,6 +56,6 @@ export class ProductsController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const { data: foundProduct } = await this.productsService.findOne(id);
-    return this.productsService.remove(foundProduct);
+    return this.productsService.remove(foundProduct.product);
   }
 }

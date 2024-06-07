@@ -21,14 +21,7 @@ export class ProductDetailController {
         quantity: { type: "number" },
         description: { type: "string" },
         discount: { type: "number" },
-        colors: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-          example: ['blue', 'white', 'black'] 
-        },
-
+        colors: {type: "string" },
         product_id: { type: "number" },
         ['files']: {
           type: 'array',

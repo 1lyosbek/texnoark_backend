@@ -1,8 +1,5 @@
 import { BaseEntity } from 'src/common/database/base.entity';
-import { BrandEntity } from 'src/modules/brand/entities/brand.entity';
-import { ProductEntity } from 'src/modules/products/entities/product.entity';
-import { SubCategoryEntity } from 'src/modules/sub-category/entities/sub-category.entity';
-import { Entity, Column, OneToMany, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, Column } from 'typeorm';
 
 @Entity("product_detail")
 export class ProductDetailEntity extends BaseEntity {
@@ -21,8 +18,7 @@ export class ProductDetailEntity extends BaseEntity {
     @Column({ name: "discount", type: "numeric", nullable: true })
     discount: number;
 
-    @OneToOne(()=> ProductEntity)
-    @JoinColumn({name: "product_id"})
-    product_id: ProductEntity;
+    @Column({ name: "product_id", type: "int", nullable: false })
+    product_id: number;
 }
 

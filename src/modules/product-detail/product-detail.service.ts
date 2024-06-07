@@ -6,9 +6,10 @@ import { ResData } from 'src/lib/resData';
 import { ProductDetailEntity } from './entities/product-detail.entity';
 import { ProductsService } from '../products/products.service';
 import { ProductDetailNotFound } from './exceptions/product-detail.exceptions';
+import { IProductDetailService } from './interfaces/server-interface';
 
 @Injectable()
-export class ProductDetailService {
+export class ProductDetailService implements IProductDetailService {
   constructor(
     @Inject("IProductDetailRepository") private readonly productDetailRepository: IProductDetailRepository,
     @Inject("IProductService") private readonly productService: ProductsService
@@ -27,7 +28,7 @@ export class ProductDetailService {
     newProductDetail.description = createProductDetailDto.description;
     newProductDetail.discount = createProductDetailDto.discount;
     newProductDetail.images = paths;
-    newProductDetail.product_id = foundProduct;
+    newProductDetail.product_id = foundProduct.product.id;
     const created = await this.productDetailRepository.createProductDetail(newProductDetail);
     return new ResData<ProductDetailEntity>("Product detail created successfully", 201, created);
   }
@@ -45,6 +46,16 @@ export class ProductDetailService {
     return new ResData<ProductDetailEntity>("Product detail found", 200, foundProductDetail);
   }
 
+  async findByProductId(id: number): Promise<ResData<ProductDetailEntity | null>>{
+    const foundProductDetail = await this.productDetailRepository.getByProductId(id);
+    const resData = new ResData<ProductDetailEntity | null>("Product detail found by product id", 200, foundProductDetail);
+    if (!foundProductDetail) {
+      resData.message = "Product detail not found by product id";
+      resData.statusCode = 404;
+    }
+    return resData;
+  }
+
   async update(id: number, updateProductDetailDto: UpdateProductDetailDto):Promise<ResData<ProductDetailEntity>> {
     const { data: foundProduct } = await this.productService.findOne(updateProductDetailDto.product_id);
     const { data: foundProductDetail } = await this.findOne(id);
@@ -52,7 +63,7 @@ export class ProductDetailService {
     foundProductDetail.description = updateProductDetailDto.description;
     foundProductDetail.discount = updateProductDetailDto.discount;
     foundProductDetail.colors = updateProductDetailDto.colors;
-    foundProductDetail.product_id = foundProduct;
+    foundProductDetail.product_id = foundProduct.product.id;
     const updated = await this.productDetailRepository.updateProductDetail(foundProductDetail);
     return new ResData<ProductDetailEntity>("Product detail updated successfully", 200, updated);
   }

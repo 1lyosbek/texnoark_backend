@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ProductDetailService } from './product-detail.service';
 import { ProductDetailController } from './product-detail.controller';
 import { ProductDetailRepository } from './product-detail.repository';
@@ -16,9 +16,10 @@ import { CategoryService } from '../category/category.service';
 import { CategoryRepository } from '../category/category.repository';
 import { BrandCategoryEntity } from '../brand-category/entities/brand-category.entity';
 import { CategoryEntity } from '../category/entities/category.entity';
+import { ProductsModule } from '../products/products.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([ProductDetailEntity, ProductEntity, BrandEntity, BrandCategoryEntity, CategoryEntity])],
+  imports:[forwardRef(() => ProductsModule), TypeOrmModule.forFeature([ProductDetailEntity, ProductEntity, BrandEntity, BrandCategoryEntity, CategoryEntity])],
   controllers: [ProductDetailController],
   providers: [
     {provide: "IProductDetailService", useClass: ProductDetailService},
