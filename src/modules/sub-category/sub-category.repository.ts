@@ -14,8 +14,9 @@ export class SubCategoryRepository implements ISubCategoryRepository {
             const count = foundSubCategories.length;
             return { subcategories: foundSubCategories, count };
         } else {
+            const f = await this.repository.find({where: {parent_category_id: parent_id}});
             const foundSubCategories = await this.repository.find({ where: { parent_category_id: parent_id }, skip: offset, take: limit});
-            const count = foundSubCategories.length;
+            const count = f.length;
             return { subcategories: foundSubCategories, count};
         }
     }
