@@ -15,10 +15,8 @@ export class SubCategoryRepository implements ISubCategoryRepository {
             return { subcategories: foundSubCategories, count };
         } else {
             const foundSubCategories = await this.repository.find({ where: { parent_category_id: parent_id }, skip: offset, take: limit});
-            const count = await this.repository.createQueryBuilder('sub_category')
-                .select('COUNT(*) count')
-                .getRawOne();
-            return { subcategories: foundSubCategories, count: parseInt(count.count, 10)};
+            const count = foundSubCategories.length;
+            return { subcategories: foundSubCategories, count};
         }
     }
     async getSubCategory(id: number): Promise<SubCategoryEntity> {
