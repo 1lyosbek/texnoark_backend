@@ -22,7 +22,10 @@ export class SubCategoryRepository implements ISubCategoryRepository {
         }
     }
     async getSubCategory(id: number): Promise<SubCategoryEntity> {
-        return await this.repository.findOne({where: {id}, relations: ["parent_category_id"]});
+        return await this.repository.findOneBy({id});
+    }
+    async getSubCategoryByName(name: string): Promise<SubCategoryEntity> {
+        return await this.repository.findOneBy({name});
     }
     async createSubCategory(entity: SubCategoryEntity): Promise<SubCategoryEntity> {
         return await this.repository.save(entity);

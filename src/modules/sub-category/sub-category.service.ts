@@ -6,7 +6,7 @@ import { ISubCategoryEntityCount, ISubCategoryRepository } from './interfaces/re
 import { ResData } from 'src/lib/resData';
 import { SubCategoryEntity } from './entities/sub-category.entity';
 import { CategoryService } from '../category/category.service';
-import { ParentCategoryIdLengthNotFound, SubCategoryNotFound } from './exceptions/sub-category.exceptions';
+import { SubCategoryNotFound } from './exceptions/sub-category.exceptions';
 
 @Injectable()
 export class SubCategoryService implements ISubCategoryService {
@@ -29,9 +29,6 @@ export class SubCategoryService implements ISubCategoryService {
     page = (page - 1) * limit;
     const { data: foundCategory } = await this.categoryService.findOne(id);
     const foundCategories = await this.subCategoryRepository.getSubCategories(id, word, limit, page);
-    if (foundCategories.subcategories.length === 0) {
-      throw new ParentCategoryIdLengthNotFound();
-    }
     return new ResData<ISubCategoryEntityCount>("Sub categories", 200, {subcategories: foundCategories.subcategories, count: foundCategories.count});
   }
 
@@ -41,6 +38,16 @@ export class SubCategoryService implements ISubCategoryService {
       throw new SubCategoryNotFound();
     }
     return new ResData<SubCategoryEntity>("Sub category found", 200, foundSubCategory);
+  }
+
+  async findSubCategoryByName(name: string): Promise<ResData<SubCategoryEntity>> {
+    const foundSubCategoryByName = await this.subCategoryRepository.getSubCategoryByName(name);
+    const resData = new ResData<SubCategoryEntity>("Sub Category found", 200, foundSubCategoryByName);
+    if (!foundSubCategoryByName) {
+      resData.message = "Sub category not found";
+      resData.statusCode = 404;
+    } 
+    return resData;
   }
 
   async updateSubCategory(id: number, updateSubCategoryDto: UpdateSubCategoryDto): Promise<ResData<SubCategoryEntity>> {

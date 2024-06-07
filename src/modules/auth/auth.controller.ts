@@ -10,6 +10,8 @@ import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
 import { CookieGetter } from 'src/common/decorator/cookiGetter';
+import { ResData } from 'src/lib/resData';
+import { ILoginData } from './interfaces/auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -24,14 +26,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
-    return await this.authService.login(loginDto, res);
+    const found = await this.authService.login(loginDto, res);
+    return found;
   }
-  // @ApiOperation({ summary: "Update refresh token" })
-  // @HttpCode(HttpStatus.OK)
-  // @Get('refresh/:id')
-  // async refreshToken(@CookieGetter("refresh_token"), @Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-  //   return await this.authService.login(loginDto, res);
-  // }
 
   @ApiOperation({ summary: "Create new admin" })
   @Post('admin/sign-up')

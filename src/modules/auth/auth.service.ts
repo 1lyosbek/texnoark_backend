@@ -33,7 +33,6 @@ export class AuthService implements IAuthService {
     if (!foundUser) {
       throw new PhoneOrPasswordWrongException();
     }
-
     const compared = await compare(dto.password, foundUser.password);
     if (!compared) {
       throw new PhoneOrPasswordWrongException();
@@ -46,7 +45,6 @@ export class AuthService implements IAuthService {
       httpOnly: true,
       maxAge: config.jwtCookieTime,
     });
-
     return new ResData<ILoginData>("User successfully logged in", HttpStatus.OK, {
       data: foundUser,
       tokens: {access_token, refresh_token},
@@ -85,9 +83,9 @@ export class AuthService implements IAuthService {
     const savedUser = await this.userRepository.createUser(newUser);
     const access_token = await this.jwtService.signAsync({ id: savedUser.id });
     const refresh_token = await this.jwtService.signAsync({ id: savedUser.id }, { secret: config.jwtRefreshKey, expiresIn: config.jwtRefreshExpiresIn });
-    const { data: foundUser } = await this.adminService.findOne(savedUser.id);
+    const { data: foundUser } = await this.userService.findOne(savedUser.id);
     foundUser.hashed_refresh_token = await hashed(refresh_token);
-    const updated = await this.adminRepository.updateAdmin(foundUser);
+    const updated = await this.userRepository.updateUser(foundUser);
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
       maxAge: config.jwtCookieTime,

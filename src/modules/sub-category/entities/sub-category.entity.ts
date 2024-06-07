@@ -7,12 +7,7 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 export class SubCategoryEntity extends BaseEntity {
     @Column({ name: "name", type: "varchar", nullable: false, unique: true })
     name: string;
-
-    // @ManyToOne(
-    //     () => CategoryEntity,
-    //     (categoryEntity) => categoryEntity.categories, { onDelete: 'CASCADE', nullable: true }
-    // )
-    // @JoinColumn({ name: "parent_category_id" })
+    
     @Column({ name: "parent_category_id", type: "varchar", nullable: false })
     parent_category_id: number;
 }

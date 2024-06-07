@@ -42,6 +42,7 @@ export class ProductDetailController {
   })
   @UseInterceptors(FilesInterceptor('files', 4, fileOptions))
   async create(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: any) {
+    console.log(files);
     const dto: ICreateProductDetailDto = {
       ...body,
       quantity: Number(body.quantity),

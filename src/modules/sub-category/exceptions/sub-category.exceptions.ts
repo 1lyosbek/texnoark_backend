@@ -6,8 +6,8 @@ export class SubCategoryNotFound extends HttpException{
     }
 }
 
-export class ParentCategoryIdLengthNotFound extends HttpException{
+export class SubCategoryAlreadyExist extends HttpException{
     constructor() {
-        super('No sub-category found for this category', HttpStatus.NOT_FOUND);
+        super('This sub categorty already exist', HttpStatus.BAD_REQUEST);
     }
 }

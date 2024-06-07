@@ -3,6 +3,7 @@ import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ISubCategoryService } from './interfaces/server-interface';
+import { SubCategoryAlreadyExist } from './exceptions/sub-category.exceptions';
 
 @ApiTags("sub_category")
 @Controller('sub-category')
@@ -11,8 +12,12 @@ export class SubCategoryController {
 
   @ApiOperation({summary: "Create new Sub Category"})
   @Post()
-  create(@Body() createSubCategoryDto: CreateSubCategoryDto) {
-    return this.subCategoryService.createSubCategory(createSubCategoryDto);
+  async create(@Body() createSubCategoryDto: CreateSubCategoryDto) {
+    const {data: foundSubCategory } = await this.subCategoryService.findSubCategoryByName(createSubCategoryDto.name);
+    if (foundSubCategory) {
+      throw new SubCategoryAlreadyExist();
+    }
+    return await this.subCategoryService.createSubCategory(createSubCategoryDto);
   }
 
   @ApiQuery({
@@ -55,7 +60,8 @@ export class SubCategoryController {
   @ApiOperation({ summary: "Delete Sub Category by id" })
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    const {data: foundSubCategory } = await this.subCategoryService.findOneSubCategory(id);
+    const { data: foundSubCategory } = await this.subCategoryService.findOneSubCategory(id);
+    console.log(3);
     return await this.subCategoryService.removeSubCategory(foundSubCategory);
   }
 }
