@@ -2,7 +2,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { IBrandCategoryEntityCount, IBrandCategoryRepository } from "./interface/repository-interface";
 import { ILike, Repository } from "typeorm";
 import { BrandCategoryEntity } from "./entities/brand-category.entity";
-import { ResData } from "src/lib/resData";
 
 export class BrandCategoryRepository implements IBrandCategoryRepository {
     constructor(@InjectRepository(BrandCategoryEntity) private repository: Repository<BrandCategoryEntity>) {}
@@ -11,11 +10,11 @@ export class BrandCategoryRepository implements IBrandCategoryRepository {
 
         if (word && word.trim() !== "") {
             whereCondition = { name: ILike(`%${word}%`) };
-            const foundBrandCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit, relations: ["brand_id"] });
+            const foundBrandCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit });
             const count = foundBrandCategories.length;
             return { brandCategories: foundBrandCategories, count };
         } else {
-            const foundBrandCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit, relations: ["brand_id"]});
+            const foundBrandCategories = await this.repository.find({ where: whereCondition, skip: offset, take: limit });
             const count = await this.repository.createQueryBuilder('brand_category')
                 .select('COUNT(*) count')
                 .getRawOne();
@@ -23,7 +22,7 @@ export class BrandCategoryRepository implements IBrandCategoryRepository {
         }
     }
     async getBrandCategory(id: number): Promise<BrandCategoryEntity> {
-        return await this.repository.findOne({where: {id}, relations: ["brand_id"]});
+        return await this.repository.findOne({where: {id}});
     }
 
     async getByBrandId(brandId: number, limit: number, offset: number): Promise<IBrandCategoryEntityCount> {
