@@ -29,6 +29,16 @@ export class AuthController {
     res.send(found)
   }
 
+  @Get('refresh/:id')
+  async refresh(
+    @Param('id', ParseIntPipe) id: number,
+    @CookieGetter("refresh_token") refreshToken: string,
+    @Res() res: Response,
+  ) {
+    const refreshed = await this.authService.refreshToken(id, refreshToken, res);
+    res.send(refreshed);
+  }
+
   @ApiOperation({ summary: "Create new admin" })
   @Post('admin/sign-up')
   async registerAdmin(@Body() createDto: UserRegisterDto, @Res() res: Response) {

@@ -1,7 +1,7 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { IAuthService, ILoginData } from './interfaces/auth.service';
 import { ResData } from 'src/lib/resData';
-import { PhoneOrPasswordWrongException } from './exception/auth.exception';
+import { InvalidRefreshToken, PhoneOrPasswordWrongException } from './exception/auth.exception';
 import { JwtService } from '@nestjs/jwt';
 import { hashed, compare } from 'src/lib/bcrypt';
 import { RoleEnum } from 'src/common/enums/enums';
@@ -47,6 +47,30 @@ export class AuthService implements IAuthService {
     });
     return new ResData<ILoginData>("User successfully logged in", HttpStatus.OK, {
       data: foundUser,
+      tokens: {access_token, refresh_token},
+    });
+  }
+
+  async refreshToken(id: number, refreshToken: string, res: Response): Promise<ResData<ILoginData>> {
+    const verified = await this.jwtService.verifyAsync(refreshToken, {secret: config.jwtRefreshKey} );
+    if (!verified || verified.id != id) {
+      throw new InvalidRefreshToken();
+    }    
+    const { data: foundUser } = await this.userService.findUserAny(id);
+    const tokenMatch = await compare(refreshToken, foundUser.hashed_refresh_token);
+    if (!tokenMatch) {
+      throw new InvalidRefreshToken();
+    }
+    const access_token = await this.jwtService.signAsync({ id: foundUser.id });
+    const refresh_token = await this.jwtService.signAsync({ id: foundUser.id }, { secret: config.jwtRefreshKey, expiresIn: config.jwtRefreshExpiresIn });
+    foundUser.hashed_refresh_token = await hashed(refresh_token);
+    const updated = await this.userRepository.updateUser(foundUser);
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      maxAge: config.jwtCookieTime,
+    });
+    return new ResData<ILoginData>("User refreshed", HttpStatus.OK, {
+      data: updated,
       tokens: {access_token, refresh_token},
     });
   }

@@ -18,8 +18,16 @@ export class UserService implements IUserService {
     return new ResData<IUserEntityCount>("All available users", 200, {users: foundUsers.users, count: foundUsers.count});
   }
 
-  async findOne(id: number): Promise<ResData<UserEntity>> {
+  async findOne(id: number): Promise<ResData<UserEntity | null>> {
     const foundUser = await this.userRepository.getUserById(id);
+    if (!foundUser) {
+      throw new UserNotFound();
+    }
+    return new ResData<UserEntity | null>("User found", 200, foundUser);
+  }
+
+  async findUserAny(id: number): Promise<ResData<UserEntity>> {
+    const foundUser = await this.userRepository.getUserAny(id);
     if (!foundUser) {
       throw new UserNotFound();
     }
