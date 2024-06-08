@@ -27,6 +27,9 @@ export class CategoryRepository implements ICategoryRepository{
     async createCategory(category: CategoryEntity): Promise<CategoryEntity> {
         return await this.repository.save(category);
     }
+    async getByName(name: string): Promise<CategoryEntity> {
+        return await this.repository.findOneBy({name});
+    }
     async updateCategory(category: CategoryEntity): Promise<CategoryEntity> {
         return await this.repository.save(category);
     }

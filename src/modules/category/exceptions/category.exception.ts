@@ -5,3 +5,8 @@ export class CategoryNotFound extends HttpException {
         super("Category not found", HttpStatus.NOT_FOUND)
     }
 }
+export class CategoryAlreadyExist extends HttpException {
+    constructor() {
+        super("This category already exist", HttpStatus.BAD_REQUEST)
+    }
+}

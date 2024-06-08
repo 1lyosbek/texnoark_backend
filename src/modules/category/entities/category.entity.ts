@@ -7,7 +7,7 @@ import { Entity, Column, OneToMany,  ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity("categories")
 export class CategoryEntity extends BaseEntity {
-    @Column({ name: "name", type: "varchar", nullable: false })
+    @Column({ name: "name", type: "varchar", nullable: false, unique: true })
     name: string;
 
     @OneToMany(

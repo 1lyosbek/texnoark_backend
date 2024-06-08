@@ -7,6 +7,7 @@ import { ICategoryEntityCount } from "./repository-interface";
 export interface ICategoryService {
     findAll(word: string, limit: number, page: number): Promise<ResData<ICategoryEntityCount>>;
     findOne(id: number): Promise<ResData<CategoryEntity>>;
+    findByName(name: string): Promise<ResData<CategoryEntity | null>>;
     create(category: CreateCategoryDto): Promise<ResData<CategoryEntity>>;
     update(id: number, category: UpdateCategoryDto): Promise<ResData<CategoryEntity>>;
     remove(entity: CategoryEntity): Promise<ResData<CategoryEntity>>;

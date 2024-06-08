@@ -3,6 +3,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategoryService } from './interface/service-interface';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { CategoryAlreadyExist } from './exceptions/category.exception';
 
 @ApiTags('category')
 @Controller('category')
@@ -12,6 +13,10 @@ export class CategoryController {
   @ApiOperation({ summary: "Create new category" })
   @Post('create')
   async create(@Body() createCategoryDto: CreateCategoryDto) {
+    const {data: foundCategory } = await this.categoryService.findByName(createCategoryDto.name);
+    if (foundCategory) {
+      throw new CategoryAlreadyExist();
+    }
     return await this.categoryService.create(createCategoryDto);
   }
 

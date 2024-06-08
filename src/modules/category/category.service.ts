@@ -24,6 +24,16 @@ export class CategoryService implements ICategoryService {
     const foundCategories = await this.categoryRepository.getCategories(word, limit, page);
     return new ResData<ICategoryEntityCount>("All available categories", 200, {categories: foundCategories.categories, count: foundCategories.count});
   }
+  
+  async findByName(name: string): Promise<ResData<CategoryEntity | null>> {
+    const foundCategory = await this.categoryRepository.getByName(name);
+    const resData = new ResData<CategoryEntity | null>("Category found by name", 200, foundCategory)
+    if (!foundCategory) {
+      resData.message = "Category not found by name";
+      resData.statusCode = 404;
+    }
+    return resData;
+  }
 
   async findOne(id: number):Promise<ResData<CategoryEntity>> {
     const foundCategory = await this.categoryRepository.getCategory(id);

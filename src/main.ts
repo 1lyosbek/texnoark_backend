@@ -15,7 +15,7 @@ async function bootstrap() {
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
 
-  // app.useGlobalPipes(
+  app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
       whitelist: true,
