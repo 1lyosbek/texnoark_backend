@@ -7,7 +7,7 @@ import { IStockEntityCount } from "./interfaces/service.interface";
 export class StockRepository implements IStockRepository{
     constructor(@InjectRepository(StockEntity) private repository: Repository<StockEntity>) {}
     async getStocks(limit: number, offset: number): Promise<IStockEntityCount> {
-            const foundStocks = await this.repository.find({ skip: offset, take: limit });
+            const foundStocks = await this.repository.find({ skip: offset, take: limit, relations: ["category_id", "product_id"]});
             const count = await this.repository.createQueryBuilder('prducts')
                 .select('COUNT(*) count')
                 .getRawOne();
