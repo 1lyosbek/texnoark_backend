@@ -37,7 +37,6 @@ export class AuthController {
     res.send(refreshed);
   }
 
-  @Auth(RoleEnum.SUPERADMIN)
   @ApiOperation({ summary: "Create new admin" })
   @Post('admin/sign-up')
   async registerAdmin(@Body() createDto: UserRegisterDto, @Res() res: Response) {
