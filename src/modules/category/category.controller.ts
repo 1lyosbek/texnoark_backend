@@ -4,12 +4,15 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategoryService } from './interface/service-interface';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CategoryAlreadyExist } from './exceptions/category.exception';
+import { RoleEnum } from 'src/common/enums/enums';
+import { Auth } from 'src/common/decorator/auth.decorator';
 
 @ApiTags('category')
 @Controller('category')
 export class CategoryController {
   constructor(@Inject("ICategoryService") private readonly categoryService: ICategoryService) {}
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Create new category" })
   @Post('create')
   async create(@Body() createCategoryDto: CreateCategoryDto) {
@@ -50,12 +53,14 @@ export class CategoryController {
     return await this.categoryService.findOne(id);
   }
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Update category by id" })
   @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateCategoryDto: UpdateCategoryDto) {
     return await this.categoryService.update(id, updateCategoryDto);
   }
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Delete category by id" })
   @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {

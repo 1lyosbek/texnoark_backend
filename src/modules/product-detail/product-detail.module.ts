@@ -17,9 +17,10 @@ import { CategoryRepository } from '../category/category.repository';
 import { BrandCategoryEntity } from '../brand-category/entities/brand-category.entity';
 import { CategoryEntity } from '../category/entities/category.entity';
 import { ProductsModule } from '../products/products.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports:[forwardRef(() => ProductsModule), TypeOrmModule.forFeature([ProductDetailEntity, ProductEntity, BrandEntity, BrandCategoryEntity, CategoryEntity])],
+  imports: [forwardRef(() => ProductsModule), TypeOrmModule.forFeature([ProductDetailEntity, ProductEntity, BrandEntity, BrandCategoryEntity, CategoryEntity]), SharedModule],
   controllers: [ProductDetailController],
   providers: [
     {provide: "IProductDetailService", useClass: ProductDetailService},

@@ -4,9 +4,10 @@ import { AdminController } from './admin.controller';
 import { AdminRepository } from './admin.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../user/entities/user.entity';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity]), SharedModule],
   controllers: [AdminController],
   providers: [
    {provide: "IAdminService", useClass: AdminService},

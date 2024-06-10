@@ -2,6 +2,8 @@ import { Controller, Get, Body, Patch, Param, Delete, ParseIntPipe, Inject, Quer
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUserService } from './interfaces/service-interface';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/common/decorator/auth.decorator';
+import { RoleEnum } from 'src/common/enums/enums';
 
 @ApiTags('user')
 @Controller('users')
@@ -25,6 +27,7 @@ export class UserController {
     type: Number,
     description: 'For page'
   })
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Get all users"})
   @Get('search')
   async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {

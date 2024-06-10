@@ -3,12 +3,15 @@ import { CreateBrandCategoryDto } from './dto/create-brand-category.dto';
 import { UpdateBrandCategoryDto } from './dto/update-brand-category.dto';
 import { IBrandCategoryService } from './interface/service-interface';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { RoleEnum } from 'src/common/enums/enums';
+import { Auth } from 'src/common/decorator/auth.decorator';
 
 @ApiTags("brand-category")
 @Controller('brand-category')
 export class BrandCategoryController {
   constructor(@Inject("IBrandCategoryService") private readonly brandCategoryService: IBrandCategoryService) {}
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({summary: "Create new Brand Category"})
   @Post('create')
   async create(@Body() createBrandCategoryDto: CreateBrandCategoryDto) {
@@ -62,12 +65,14 @@ export class BrandCategoryController {
     return await this.brandCategoryService.findOneBrandCategory(id);
   }
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Update Brand Category by id" })
   @Patch('update/:id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateBrandCategoryDto: UpdateBrandCategoryDto) {
     return this.brandCategoryService.updateBrandCategory(id, updateBrandCategoryDto);
   }
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Delete Brand Category by id" })
   @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {

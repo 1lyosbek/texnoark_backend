@@ -16,10 +16,11 @@ import { CategoryEntity } from '../category/entities/category.entity';
 import { ProductDetailService } from '../product-detail/product-detail.service';
 import { ProductDetailRepository } from '../product-detail/product-detail.repository';
 import { ProductDetailEntity } from '../product-detail/entities/product-detail.entity';
+import { SharedModule } from '../shared/shared.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProductEntity, BrandEntity, BrandCategoryEntity, CategoryEntity, ProductDetailEntity])],
+  imports: [TypeOrmModule.forFeature([ProductEntity, BrandEntity, BrandCategoryEntity, CategoryEntity, ProductDetailEntity]), SharedModule],
   controllers: [ProductsController],
   providers: [
    {provide: "IProductService", useClass: ProductsService},

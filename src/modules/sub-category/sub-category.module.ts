@@ -7,9 +7,10 @@ import { CategoryRepository } from '../category/category.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubCategoryEntity } from './entities/sub-category.entity';
 import { CategoryEntity } from '../category/entities/category.entity';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SubCategoryEntity, CategoryEntity])],
+  imports: [TypeOrmModule.forFeature([SubCategoryEntity, CategoryEntity]), SharedModule],
   controllers: [SubCategoryController],
   providers: [
    {provide: "ISubCategoryService", useClass: SubCategoryService},

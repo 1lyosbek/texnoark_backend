@@ -4,12 +4,15 @@ import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ISubCategoryService } from './interfaces/server-interface';
 import { SubCategoryAlreadyExist } from './exceptions/sub-category.exceptions';
+import { RoleEnum } from 'src/common/enums/enums';
+import { Auth } from 'src/common/decorator/auth.decorator';
 
 @ApiTags("sub_category")
 @Controller('sub-category')
 export class SubCategoryController {
   constructor(@Inject("ISubCategoryService") private readonly subCategoryService: ISubCategoryService) {}
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({summary: "Create new Sub Category"})
   @Post('create')
   async create(@Body() createSubCategoryDto: CreateSubCategoryDto) {
@@ -51,11 +54,15 @@ export class SubCategoryController {
   }
 
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
+
   @ApiOperation({ summary: "Update Sub Category by id" })
   @Patch('update/:id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateSubCategoryDto: UpdateSubCategoryDto) {
     return this.subCategoryService.updateSubCategory(id, updateSubCategoryDto);
   }
+
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
 
   @ApiOperation({ summary: "Delete Sub Category by id" })
   @Delete('delete/:id')

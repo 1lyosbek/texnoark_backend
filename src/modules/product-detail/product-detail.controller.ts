@@ -5,12 +5,15 @@ import { UpdateProductDetailDto } from './dto/update-product-detail.dto';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { fileOptions } from 'src/lib/fileOpitions';
+import { Auth } from 'src/common/decorator/auth.decorator';
+import { RoleEnum } from 'src/common/enums/enums';
 
 @ApiTags('product-detail')
 @Controller('product-detail')
 export class ProductDetailController {
   constructor(@Inject("IProductDetailService") private readonly productDetailService: ProductDetailService) {}
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({summary: "Create new product detail"})
   @Post('create')
   @ApiConsumes('multipart/form-data')
@@ -58,12 +61,13 @@ export class ProductDetailController {
     return await this.productDetailService.findOne(id);
   }
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Update product detail by id" })
   @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDetailDto: UpdateProductDetailDto) {
     return await this.productDetailService.update(id, updateProductDetailDto);
   }
-
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Delete product detail by id"})
   @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {

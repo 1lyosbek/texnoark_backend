@@ -19,9 +19,10 @@ import { ProductDetailRepository } from '../product-detail/product-detail.reposi
 import { ProductDetailService } from '../product-detail/product-detail.service';
 import { BrandCategoryRepository } from '../brand-category/brand-category.repository';
 import { ProductDetailEntity } from '../product-detail/entities/product-detail.entity';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StockEntity, CategoryEntity, BrandEntity, ProductEntity, BrandCategoryEntity, ProductDetailEntity])],
+  imports: [TypeOrmModule.forFeature([StockEntity, CategoryEntity, BrandEntity, ProductEntity, BrandCategoryEntity, ProductDetailEntity]), SharedModule],
   controllers: [StockController],
   providers: [
      {provide: "IStockService", useClass: StockService},

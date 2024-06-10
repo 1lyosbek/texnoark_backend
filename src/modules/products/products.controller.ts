@@ -3,6 +3,8 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/common/decorator/auth.decorator';
+import { RoleEnum } from 'src/common/enums/enums';
 
 @ApiTags('product')
 @Controller('products')
@@ -10,6 +12,7 @@ export class ProductsController {
   constructor(
     @Inject("IProductService") private readonly productsService: ProductsService
   ) {}
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({summary: "Create new product"})
   @Post('create')
   async create(@Body() createProductDto: CreateProductDto) {
@@ -45,13 +48,14 @@ export class ProductsController {
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.productsService.findOne(id);
   }
-
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Update product by id" })
   @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
     return await this.productsService.update(id, updateProductDto);
   }
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Delete product by id" })
   @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {

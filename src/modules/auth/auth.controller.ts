@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Inject, Res, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Body, Inject, Res, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRegisterDto } from './dto/admin.dto';
 import { AuthService } from './auth.service';
@@ -10,8 +10,6 @@ import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
 import { CookieGetter } from 'src/common/decorator/cookiGetter';
-import { ResData } from 'src/lib/resData';
-import { ILoginData } from './interfaces/auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -39,6 +37,7 @@ export class AuthController {
     res.send(refreshed);
   }
 
+  @Auth(RoleEnum.SUPERADMIN)
   @ApiOperation({ summary: "Create new admin" })
   @Post('admin/sign-up')
   async registerAdmin(@Body() createDto: UserRegisterDto, @Res() res: Response) {

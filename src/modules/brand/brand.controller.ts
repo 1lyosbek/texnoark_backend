@@ -16,6 +16,7 @@ import { Auth } from 'src/common/decorator/auth.decorator';
 export class BrandController {
   constructor(@Inject("IBrandService") private readonly brandService: IBrandService) {}
   @ApiConsumes('multipart/form-data')
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Create new brand" })
   @Post('create')
   @ApiBody({
@@ -90,12 +91,14 @@ export class BrandController {
     return await this.brandService.findOne(id);
   }
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Update brand by id" })
   @Patch('update/:id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateBrandDto: UpdateBrandDto) {
     return await this.brandService.update(id, updateBrandDto);
   }
 
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({ summary: "Delete brand by id" })
   @Delete('delete/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
