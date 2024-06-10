@@ -10,11 +10,11 @@ export class UpdateProductDetailDto {
     quantity: number;
 
     @ApiPropertyOptional({
-        type: Array
+        type: String
     })
-    @IsArray()
+    @IsString()
     @IsOptional()
-    colors: Array<string>;
+    colors: string;
 
     @ApiPropertyOptional({
         type: String

@@ -18,17 +18,6 @@ export class StockEntity extends BaseEntity {
     category_id: CategoryEntity;
 
     @ManyToOne(
-        () => BrandEntity,
-        (brandEntity) => brandEntity.stocks,
-        {
-            onDelete: 'SET NULL',
-            nullable: true,
-        },
-    )
-    @JoinColumn({ name: 'brand_id' })
-    brand_id: BrandEntity;
-
-    @ManyToOne(
         () => ProductEntity,
         (productEntity) => productEntity.stocks,
         {
@@ -38,6 +27,9 @@ export class StockEntity extends BaseEntity {
     )
     @JoinColumn({ name: 'product_id' })
     product_id: ProductEntity;
+
+    @Column({name: 'brand_id', type: "int", nullable: false})
+    brand_id: number;
 
     @Column({name: 'quantity', type: "numeric", nullable: false})
     quantity: number;

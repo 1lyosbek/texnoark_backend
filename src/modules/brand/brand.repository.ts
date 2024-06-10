@@ -10,7 +10,7 @@ export class BrandRepository implements IBrandRepository {
 
         if (word && word.trim() !== "") {
             whereCondition = { name: ILike(`%${word}%`) };
-            const foundBrands = await this.repository.find({ where: whereCondition, skip: offset, take: limit, relations: ["category_id"] });
+            const foundBrands = await this.repository.find({ where: whereCondition, skip: offset, take: limit});
             const count = foundBrands.length;
             return { brands: foundBrands, count };
         } else {

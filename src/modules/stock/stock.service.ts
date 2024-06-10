@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
-import { IStockService } from './interfaces/service.interface';
+import { IStockEntityCount, IStockService } from './interfaces/service.interface';
 import { IStockRepository } from './interfaces/repository.interface';
 import { ResData } from 'src/lib/resData';
 import { StockEntity } from './entities/stock.entity';
@@ -24,15 +24,23 @@ export class StockService implements IStockService {
     const { data: foundProduct } = await this.productService.findOne(createStockDto.product_id);
     const newStock = new StockEntity();
     newStock.category_id = foundCategory;
-    newStock.brand_id = foundBrand;
+    newStock.brand_id = foundBrand.id;
     newStock.product_id = foundProduct.product;
     newStock.quantity = createStockDto.quantity;
     const created = await this.stockRepository.createStock(newStock);
     return new ResData<StockEntity>("Stock created successfully", 201, created);
   }
 
-  async findAll(): Promise<ResData<StockEntity[]>> {
-    const foundStocks = await this.stockRepository.getStocks();
+  async findAll(limit: number, page: number): Promise<ResData<IStockEntityCount>> {
+    limit = limit > 0 ? limit : 10;
+    page = page > 0 ? page : 1;
+    page = (page - 1) * limit;
+    const foundStocks = await this.stockRepository.getStocks(limit, page);
+    return new ResData<IStockEntityCount>("All available stocks", 200, foundStocks);
+  }
+
+  async findByBrandId(brandId: number): Promise<ResData<StockEntity[]>> {
+    const foundStocks = await this.stockRepository.getByBrandId(brandId);
     return new ResData<StockEntity[]>("All available stocks", 200, foundStocks);
   }
 
@@ -50,7 +58,7 @@ export class StockService implements IStockService {
     const { data: foundBrand } = await this.brandService.findOne(updateStockDto.brand_id);
     const { data: foundProduct } = await this.productService.findOne(updateStockDto.product_id);
     foundStock.category_id = foundCategory;
-    foundStock.brand_id = foundBrand;
+    foundStock.brand_id = foundBrand.id;
     foundStock.product_id = foundProduct.product;
     foundStock.quantity = updateStockDto.quantity;
     const updated = await this.stockRepository.updateStock(foundStock);

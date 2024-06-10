@@ -7,9 +7,13 @@ import { BrandEntity } from './entities/brand.entity';
 import { CategoryService } from '../category/category.service';
 import { CategoryRepository } from '../category/category.repository';
 import { CategoryEntity } from '../category/entities/category.entity';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BrandEntity, CategoryEntity])],
+  imports: [
+    TypeOrmModule.forFeature([BrandEntity, CategoryEntity]),
+    SharedModule
+  ],
   controllers: [BrandController],
   providers: [
     {provide: "IBrandService", useClass: BrandService},

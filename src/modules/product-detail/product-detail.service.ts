@@ -62,7 +62,7 @@ export class ProductDetailService implements IProductDetailService {
     foundProductDetail.quantity = updateProductDetailDto.quantity;
     foundProductDetail.description = updateProductDetailDto.description;
     foundProductDetail.discount = updateProductDetailDto.discount;
-    foundProductDetail.colors = updateProductDetailDto.colors;
+    foundProductDetail.colors = updateProductDetailDto.colors.split(',').map(color => color.trim());
     foundProductDetail.product_id = foundProduct.product.id;
     const updated = await this.productDetailRepository.updateProductDetail(foundProductDetail);
     return new ResData<ProductDetailEntity>("Product detail updated successfully", 200, updated);

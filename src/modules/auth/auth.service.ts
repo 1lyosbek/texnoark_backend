@@ -37,7 +37,7 @@ export class AuthService implements IAuthService {
     if (!compared) {
       throw new PhoneOrPasswordWrongException();
     }
-    const access_token = await this.jwtService.signAsync({ id: foundUser.id });
+    const access_token = await this.jwtService.signAsync({ id: foundUser.id }, {secret: config.jwtKey, expiresIn: config.jwtExpiresIn});
     const refresh_token = await this.jwtService.signAsync({ id: foundUser.id }, { secret: config.jwtRefreshKey, expiresIn: config.jwtRefreshExpiresIn });
     foundUser.hashed_refresh_token = await hashed(refresh_token);
     const updated = await this.adminRepository.updateAdmin(foundUser);

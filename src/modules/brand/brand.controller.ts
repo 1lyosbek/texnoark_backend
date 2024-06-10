@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Inject, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Inject, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { ICreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileOptions } from 'src/lib/fileOpitions';
-import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IBrandService } from './interfaces/service-interface';
 import { ThisBrandAlreadyExist } from './exceptions/brand.exceptions';
+import { RoleEnum } from 'src/common/enums/enums';
+import { RolesDecorator } from 'src/common/decorator/role.decorator';
+import { Auth } from 'src/common/decorator/auth.decorator';
+
 
 @ApiTags('brand')
 @Controller('brand')
@@ -55,6 +59,8 @@ export class BrandController {
     type: Number,
     description: 'For page'
   })
+
+  @Auth(RoleEnum.ADMIN)
   @ApiOperation({ summary: "Get all brands" })
   @Get('search')
   async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {

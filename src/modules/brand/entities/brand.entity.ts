@@ -24,8 +24,5 @@ export class BrandEntity extends BaseEntity {
 
     @OneToMany(() => ProductEntity, (productEntity) => productEntity.brand_id)
     products: ProductEntity[];
-
-    @OneToMany(() => StockEntity, (stockEntity) => stockEntity.brand_id)
-    stocks: StockEntity[];
 }
 
