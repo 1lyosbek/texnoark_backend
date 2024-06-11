@@ -13,16 +13,8 @@ export class ProductEntity extends BaseEntity {
     @Column({ name: "price", type: "numeric", nullable: false })
     price: number;
 
-    @ManyToOne(
-        () => BrandEntity,
-        (brandEntity) => brandEntity.products,
-        {
-            onDelete: 'SET NULL',
-            nullable: true,
-        },
-    )
-    @JoinColumn({ name: 'brand_id' })
-    brand_id: BrandEntity;
+    @Column({ name: "brand_id", type: "int", nullable: false })
+    brand_id: number;
 
     @ManyToOne(
         () => CategoryEntity,

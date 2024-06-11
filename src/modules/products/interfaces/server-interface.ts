@@ -7,6 +7,7 @@ import { ProductDetailEntity } from "src/modules/product-detail/entities/product
 
 export interface IProductService {
     findAll(word: string, limit: number, page: number): Promise<ResData<IProductEntityCount>>;
+    findByBrandId(brandId: number): Promise<ResData<ProductEntity[]>>;
     findOne(id: number): Promise<ResData<IProductDetailData>>;
     create(product: CreateProductDto): Promise<ResData<ProductEntity>>;
     update(id: number, product: UpdateProductDto): Promise<ResData<ProductEntity>>;

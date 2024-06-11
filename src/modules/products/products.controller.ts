@@ -5,12 +5,15 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { RoleEnum } from 'src/common/enums/enums';
+import { IProductService } from './interfaces/server-interface';
+import { BrandService } from '../brand/brand.service';
 
 @ApiTags('product')
 @Controller('products')
 export class ProductsController {
   constructor(
-    @Inject("IProductService") private readonly productsService: ProductsService
+    @Inject("IProductService") private readonly productsService: IProductService,
+    @Inject("IBrandService") private readonly brandService: BrandService,
   ) {}
   @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({summary: "Create new product"})
@@ -41,6 +44,12 @@ export class ProductsController {
   @Get('search')
   async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
     return await this.productsService.findAll(search, limit, page);
+  }
+  @ApiOperation({ summary: "Get products by brand id" })
+  @Get('brand/:id')
+  async findByrandId(@Param('id', ParseIntPipe) id: number) {
+    await this.brandService.findOne(id);
+    return await this.productsService.findByBrandId(id);
   }
 
   @ApiOperation({ summary: "Get product by id" })

@@ -28,7 +28,7 @@ export class ProductsService implements IProductService {
     newProduct.name = createProductDto.name;
     newProduct.price = createProductDto.price;
     newProduct.category_id = foundCategory;
-    newProduct.brand_id = foundBrand;
+    newProduct.brand_id = foundBrand.id;
     newProduct.brand_category_id = foundBrandCategory;
     const created = await this.productRepository.createProduct(newProduct);
     return new ResData<ProductEntity>("Product created successfully", 201, created);
@@ -40,6 +40,11 @@ export class ProductsService implements IProductService {
     page = (page - 1) * limit;
     const foundProducts = await this.productRepository.getProducts(word, limit, page);
     return new ResData<IProductEntityCount>("Products", 200, {products: foundProducts.products, count: foundProducts.count});
+  }
+
+  async findByBrandId(brandId: number): Promise<ResData<ProductEntity[]>> {
+    const foundProducts = await this.productRepository.getByBrandId(brandId);
+    return new ResData<ProductEntity[]>("Products found", 200, foundProducts);
   }
 
   async findOne(id: number): Promise<ResData<IProductDetailData>> {
@@ -59,7 +64,7 @@ export class ProductsService implements IProductService {
     foundProduct.product.name = updateProductDto.name;
     foundProduct.product.price = updateProductDto.price;
     foundProduct.product.category_id = foundCategory;
-    foundProduct.product.brand_id = foundBrand;
+    foundProduct.product.brand_id = foundBrand.id;
     foundProduct.product.brand_category_id = foundBrandCategory;
     const updated = await this.productRepository.updateProduct(foundProduct.product);
     return new ResData<ProductEntity>("Product updated successfully", 200, updated);

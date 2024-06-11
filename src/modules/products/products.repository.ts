@@ -20,6 +20,9 @@ export class ProductRepository implements IProductRepository {
             return {products: foundProducts, count: parseInt(count.count, 10)};
         }
     }
+    async getByBrandId(brandId: number): Promise<ProductEntity[]> {
+        return await this.repository.find({where: {brand_id: brandId}, relations: ['category_id', 'brand_category_id']});
+    }
     async getProduct(id: number): Promise<ProductEntity> {
         return await this.repository.findOneBy({id});
     }
