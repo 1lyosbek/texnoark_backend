@@ -61,7 +61,7 @@ export class BrandController {
     description: 'For page'
   })
 
-  @Auth(RoleEnum.ADMIN)
+  @Auth(RoleEnum.ADMIN, RoleEnum.SUPERADMIN)
   @ApiOperation({ summary: "Get all brands" })
   @Get('search')
   async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
