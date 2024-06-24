@@ -12,14 +12,13 @@ import { UserEntity } from '../user/entities/user.entity';
 export class LikesController {
   constructor(@Inject("ILikeService") private readonly likesService: ILikeService) {}
 
-  @Auth(RoleEnum.SUPERADMIN)
+  @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.USER)
   @ApiOperation({summary: "Create new like"})
   @Post('create')
   async create(@Body() createLikeDto: CreateLikeDto, @CurrentUser() currentUser: UserEntity) {
     return await this.likesService.create(createLikeDto, currentUser);
   }
 
-  @Auth(RoleEnum.SUPERADMIN)
   @ApiOperation({summary: "Get all likes"})
   @Get()
   async findAll() {
