@@ -1,26 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateLikeDto } from './dto/create-like.dto';
-import { UpdateLikeDto } from './dto/update-like.dto';
+import { ResData } from 'src/lib/resData';
+import { LikeEntity } from './entities/like.entity';
+import { ILikeEntityCount, ILikeRepository } from './interfaces/repository-interface';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
-export class LikesService {
-  create(createLikeDto: CreateLikeDto) {
-    return 'This action adds a new like';
+export class LikeService {
+  constructor(@Inject("ILikeRepository") private likeRepository: ILikeRepository) {}
+  async create(createLikeDto: CreateLikeDto, currentUser: UserEntity):Promise<ResData<LikeEntity>> {
+    const newLike = new LikeEntity();
+    newLike.user_id = currentUser.id;
+    newLike.product_id = createLikeDto.product_id;
+    const created = await this.likeRepository.createLike(newLike);
+    return new ResData<LikeEntity>("Like created successfully", 201, created);
   }
 
-  findAll() {
-    return `This action returns all likes`;
+  async findAll():Promise<ResData<ILikeEntityCount>> {
+    const foundLikes = await this.likeRepository.getLikes();
+    return new ResData<ILikeEntityCount>("All available likes", 200, {likes: foundLikes.likes, count: foundLikes.count});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} like`;
+  async findOne(id: number):Promise<ResData<LikeEntity>> {
+    const foundLike = await this.likeRepository.getLike(id);
+    return new ResData<LikeEntity>("Like found ", 200, foundLike);;
   }
 
-  update(id: number, updateLikeDto: UpdateLikeDto) {
-    return `This action updates a #${id} like`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} like`;
+  async remove(entity: LikeEntity): Promise<ResData<LikeEntity>> {
+    const deleted = await this.likeRepository.deleteLike(entity);
+    return new ResData<LikeEntity>("Like deleted successfully", 200, deleted);
   }
 }
