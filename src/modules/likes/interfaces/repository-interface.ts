@@ -1,7 +1,7 @@
 import { LikeEntity } from "../entities/like.entity";
 
 export interface ILikeRepository {
-    getLikes(): Promise<ILikeEntityCount>;
+    getLikes(id: number): Promise<ILikeEntityCount>;
     getLike(id: number): Promise<LikeEntity>;
     createLike(like: LikeEntity): Promise<LikeEntity>;
     deleteLike(like: LikeEntity): Promise<LikeEntity>;

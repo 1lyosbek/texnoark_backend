@@ -8,8 +8,8 @@ export class LikeRepository implements ILikeRepository {
     async createLike(like: LikeEntity): Promise<LikeEntity> {
         return await this.repository.save(like);
     }
-    async getLikes(): Promise<ILikeEntityCount> {
-        const foundLikes = await this.repository.find();
+    async getLikes(id: number): Promise<ILikeEntityCount> {
+        const foundLikes = await this.repository.find({where: {user_id: id}});
         const count = foundLikes.length;
         return { likes: foundLikes, count };
     }

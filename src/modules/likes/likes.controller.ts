@@ -19,10 +19,10 @@ export class LikesController {
     return await this.likesService.create(createLikeDto, currentUser);
   }
 
-  @ApiOperation({summary: "Get all likes"})
-  @Get()
-  async findAll() {
-    return await this.likesService.findAll();
+  @ApiOperation({summary: "Get user's likes"})
+  @Get('user/likes/:id')
+  async findAll(@Param('id', ParseIntPipe) id: number) {
+    return await this.likesService.findAll(id);
   }
 
   @ApiOperation({summary: "Delete like by id"})

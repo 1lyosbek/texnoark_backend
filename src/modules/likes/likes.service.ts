@@ -4,10 +4,15 @@ import { ResData } from 'src/lib/resData';
 import { LikeEntity } from './entities/like.entity';
 import { ILikeEntityCount, ILikeRepository } from './interfaces/repository-interface';
 import { UserEntity } from '../user/entities/user.entity';
+import { ILikeProductDetail } from './interfaces/service-interface';
+import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class LikeService {
-  constructor(@Inject("ILikeRepository") private likeRepository: ILikeRepository) {}
+  constructor(
+    @Inject("ILikeRepository") private likeRepository: ILikeRepository,
+    @Inject("IProductService") private productService: ProductsService,
+  ) {}
   async create(createLikeDto: CreateLikeDto, currentUser: UserEntity):Promise<ResData<LikeEntity>> {
     const newLike = new LikeEntity();
     newLike.user_id = currentUser.id;
@@ -16,8 +21,8 @@ export class LikeService {
     return new ResData<LikeEntity>("Like created successfully", 201, created);
   }
 
-  async findAll():Promise<ResData<ILikeEntityCount>> {
-    const foundLikes = await this.likeRepository.getLikes();
+  async findAll(id: number):Promise<ResData<ILikeEntityCount>> {
+    const foundLikes = await this.likeRepository.getLikes(id);
     return new ResData<ILikeEntityCount>("All available likes", 200, {likes: foundLikes.likes, count: foundLikes.count});
   }
 

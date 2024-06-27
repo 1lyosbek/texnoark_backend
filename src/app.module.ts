@@ -15,6 +15,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { StockModule } from './modules/stock/stock.module';
 import { AdsModule } from './modules/ads/ads.module';
 import { LikesModule } from './modules/likes/likes.module';
+import { CommentModule } from './modules/comment/comment.module';
+import { CartsModule } from './modules/carts/carts.module';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { LikesModule } from './modules/likes/likes.module';
       rootPath: join(__dirname, '..', 'upload'),
       serveRoot: '/upload',
     }),
-    TypeOrmModule.forRoot(connectionSource), AuthModule, BrandModule, CategoryModule, AdminModule, UserModule, BrandCategoryModule, SubCategoryModule, ProductsModule, ProductDetailModule, StockModule, AdsModule, LikesModule],
+    TypeOrmModule.forRoot(connectionSource), AuthModule, BrandModule, CategoryModule, AdminModule, UserModule, BrandCategoryModule, SubCategoryModule, ProductsModule, ProductDetailModule, StockModule, AdsModule, LikesModule, CommentModule, CartsModule],
   controllers: [],
   providers: [],
 })

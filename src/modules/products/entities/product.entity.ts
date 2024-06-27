@@ -2,6 +2,7 @@ import { BaseEntity } from 'src/common/database/base.entity';
 import { BrandCategoryEntity } from 'src/modules/brand-category/entities/brand-category.entity';
 import { BrandEntity } from 'src/modules/brand/entities/brand.entity';
 import { CategoryEntity } from 'src/modules/category/entities/category.entity';
+import { LikeEntity } from 'src/modules/likes/entities/like.entity';
 import { StockEntity } from 'src/modules/stock/entities/stock.entity';
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
@@ -39,6 +40,9 @@ export class ProductEntity extends BaseEntity {
 
     @OneToMany(() => StockEntity, (stockEntity) => stockEntity.product_id)
     stocks: StockEntity[];
+
+    @OneToMany(() => LikeEntity, (likeEntity) => likeEntity.product_id)
+    likes: LikeEntity[];
 }
 
 
