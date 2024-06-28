@@ -34,7 +34,7 @@ export class UpdateUserDto {
         example: 'admin@example.com',
         description: 'The email address of the admin.',
     })
-    @IsEmail()
+    @IsString()
     @IsOptional()
     email: string;
 

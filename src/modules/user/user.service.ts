@@ -46,11 +46,21 @@ export class UserService implements IUserService {
   
   async update(id: number, updateUserDto: UpdateUserDto):Promise<ResData<UserEntity>> {
     const {data: foundUser} = await this.findOne(id);
-    foundUser.first_name = updateUserDto.first_name;
-    foundUser.last_name = updateUserDto.last_name;
-    foundUser.phone_number = updateUserDto.phone_number;
-    foundUser.email = updateUserDto.email;
-    foundUser.password = await hashed(updateUserDto.password);
+    if (updateUserDto.first_name) {
+      foundUser.first_name = updateUserDto.first_name;
+    }
+    if (updateUserDto.last_name) {
+      foundUser.last_name = updateUserDto.last_name;
+    }
+    if (updateUserDto.phone_number) {
+      foundUser.phone_number = updateUserDto.phone_number;
+    }
+    if (updateUserDto.email) {
+      foundUser.email = updateUserDto.email;
+    }
+    if (updateUserDto.password) {
+      foundUser.password = await hashed(updateUserDto.password);
+    }
     const updated = await this.userRepository.updateUser(foundUser); 
     return new ResData<UserEntity>("User updated successfully", 200, updated);
   }
