@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ICreateProductDetailDto } from './dto/create-product-detail.dto';
 import { UpdateProductDetailDto } from './dto/update-product-detail.dto';
 import { IProductDetailRepository } from './interfaces/repository-interface';
 import { ResData } from 'src/lib/resData';
@@ -7,6 +6,7 @@ import { ProductDetailEntity } from './entities/product-detail.entity';
 import { ProductsService } from '../products/products.service';
 import { ProductDetailNotFound } from './exceptions/product-detail.exceptions';
 import { IProductDetailService } from './interfaces/server-interface';
+import { CreateProductDetailDto } from './dto/create-product-detail.dto';
 
 @Injectable()
 export class ProductDetailService implements IProductDetailService {
@@ -14,20 +14,14 @@ export class ProductDetailService implements IProductDetailService {
     @Inject("IProductDetailRepository") private readonly productDetailRepository: IProductDetailRepository,
     @Inject("IProductService") private readonly productService: ProductsService
   ) {}
-  async create(files: Array<Express.Multer.File>, createProductDetailDto: ICreateProductDetailDto):Promise<ResData<ProductDetailEntity>> {
+  async create(createProductDetailDto: CreateProductDetailDto):Promise<ResData<ProductDetailEntity>> {
     const {data: foundProduct } = await this.productService.findOne(createProductDetailDto.product_id);
-    const paths = [];
-    for (let i = 0; i < files.length; i++) {
-      const element = files[i];
-      element.path = `https://ecomapi.ilyosbekdev.uz/${element.path}`
-      paths.push(element.path);
-    }
+    const colorsArray = createProductDetailDto.colors.split(',').map(color => color.trim());
     const newProductDetail = new ProductDetailEntity();
     newProductDetail.quantity = createProductDetailDto.quantity;
-    newProductDetail.colors = createProductDetailDto.colors;
+    newProductDetail.colors = colorsArray;
     newProductDetail.description = createProductDetailDto.description;
     newProductDetail.discount = createProductDetailDto.discount;
-    newProductDetail.images = paths;
     newProductDetail.product_id = foundProduct.product.id;
     const created = await this.productDetailRepository.createProductDetail(newProductDetail);
     return new ResData<ProductDetailEntity>("Product detail created successfully", 201, created);

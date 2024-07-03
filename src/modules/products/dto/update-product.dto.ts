@@ -1,5 +1,4 @@
-import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { CreateProductDto } from './create-product.dto';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateProductDto {

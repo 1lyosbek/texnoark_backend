@@ -9,12 +9,15 @@ export class LikeRepository implements ILikeRepository {
         return await this.repository.save(like);
     }
     async getLikes(id: number): Promise<ILikeEntityCount> {
-        const foundLikes = await this.repository.find({where: {user_id: id}});
+        const foundLikes = await this.repository.find({where: {user_id: id}, relations: ["product_id"]});
         const count = foundLikes.length;
         return { likes: foundLikes, count };
     }
     async getLike(id: number): Promise<LikeEntity> {
         return await this.repository.findOneBy({id})
+    }
+    async getLikeByProductId(id: number): Promise<LikeEntity | null> {
+        return await this.repository.findOneBy({product_id: id});
     }
     async deleteLike(entity: LikeEntity): Promise<LikeEntity> {
         return await this.repository.remove(entity);

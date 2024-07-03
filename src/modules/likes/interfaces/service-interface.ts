@@ -6,15 +6,11 @@ import { UserEntity } from "src/modules/user/entities/user.entity";
 import { ProductDetailEntity } from "src/modules/product-detail/entities/product-detail.entity";
 
 export interface ILikeService {
-    findAll(id: number): Promise<ResData<ILikeProductDetail>>;
+    findAll(id: number): Promise<ResData<ILikeEntityCount>>;
     findOne(id: number): Promise<ResData<LikeEntity>>;
+    findOneByProductId(id: number): Promise<ResData<LikeEntity | null>>;
     create(createLikeDto: CreateLikeDto, currentUser: UserEntity): Promise<ResData<LikeEntity>>;
     remove(entity: LikeEntity): Promise<ResData<LikeEntity>>;
 }
 
-export interface ILikeProductDetail {
-    likes: LikeEntity[];
-    product_detail :ProductDetailEntity;
-    count: number;
-}
 

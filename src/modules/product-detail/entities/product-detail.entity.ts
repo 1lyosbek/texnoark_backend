@@ -6,9 +6,6 @@ export class ProductDetailEntity extends BaseEntity {
     @Column({ name: "quantity", type: "int", nullable: false })
     quantity: number;
 
-    @Column('text', { name: "images", array: true, nullable: false })
-    images: Array<string>;
-
     @Column('text', { name: "colors", array: true, nullable: false })
     colors: Array<string>;
 

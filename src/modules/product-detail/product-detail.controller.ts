@@ -1,10 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, Inject, ParseArrayPipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, ParseIntPipe } from '@nestjs/common';
 import { ProductDetailService } from './product-detail.service';
-import { ICreateProductDetailDto } from './dto/create-product-detail.dto';
+import { CreateProductDetailDto } from './dto/create-product-detail.dto';
 import { UpdateProductDetailDto } from './dto/update-product-detail.dto';
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FilesInterceptor } from '@nestjs/platform-express';
-import { fileOptions } from 'src/lib/fileOpitions';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { RoleEnum } from 'src/common/enums/enums';
 
@@ -16,37 +14,8 @@ export class ProductDetailController {
   @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
   @ApiOperation({summary: "Create new product detail"})
   @Post('create')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        quantity: { type: "number" },
-        description: { type: "string" },
-        discount: { type: "number" },
-        colors: {type: "string" },
-        product_id: { type: "number" },
-        ['files']: {
-          type: 'array',
-          items: {
-            type: 'string',
-            format: 'binary',
-          },
-        },
-      },
-    },
-  })
-  @UseInterceptors(FilesInterceptor('files', 4, fileOptions))
-  async create(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: any) {
-    console.log(files);
-    const dto: ICreateProductDetailDto = {
-      ...body,
-      quantity: Number(body.quantity),
-      discount: Number(body.discount),
-      product_id: Number(body.product_id),
-      colors: body.colors.split(',').map(color => color.trim()),
-    };
-    return await this.productDetailService.create(files, dto);
+  async create(@Body() createProductDetailDto: CreateProductDetailDto) {
+    return await this.productDetailService.create(createProductDetailDto);
   }
 
   @ApiOperation({ summary: "Get product details" })

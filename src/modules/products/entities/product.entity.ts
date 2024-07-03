@@ -13,6 +13,9 @@ export class ProductEntity extends BaseEntity {
 
     @Column({ name: "price", type: "numeric", nullable: false })
     price: number;
+    
+    @Column('text', { name: "images", array: true, nullable: false })
+    images: Array<string>;
 
     @Column({ name: "brand_id", type: "int", nullable: false })
     brand_id: number;

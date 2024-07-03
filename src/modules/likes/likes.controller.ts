@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Inject, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Inject, ParseIntPipe } from '@nestjs/common';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { ILikeService } from './interfaces/service-interface';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -23,12 +23,5 @@ export class LikesController {
   @Get('user/likes/:id')
   async findAll(@Param('id', ParseIntPipe) id: number) {
     return await this.likesService.findAll(id);
-  }
-
-  @ApiOperation({summary: "Delete like by id"})
-  @Delete('delete/:id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    const { data: foundLike } = await this.likesService.findOne(id);
-    return await this.likesService.remove(foundLike);
   }
 }

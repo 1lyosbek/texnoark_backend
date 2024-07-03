@@ -1,12 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, Query, ParseIntPipe } from '@nestjs/common';
-import { ProductsService } from './products.service';
-import { CreateProductDto } from './dto/create-product.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, Query, ParseIntPipe, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { ICreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { RoleEnum } from 'src/common/enums/enums';
 import { IProductService } from './interfaces/server-interface';
 import { BrandService } from '../brand/brand.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { fileOptions } from 'src/lib/fileOpitions';
 
 @ApiTags('product')
 @Controller('products')
@@ -16,10 +17,31 @@ export class ProductsController {
     @Inject("IBrandService") private readonly brandService: BrandService,
   ) {}
   @Auth(RoleEnum.SUPERADMIN, RoleEnum.ADMIN)
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        price: { type: "number" },
+        category_id: { type: "number" },
+        brand_category_id: {type: "number" },
+        brand_id: { type: "number" },
+        ['files']: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FilesInterceptor('files', 4, fileOptions))
   @ApiOperation({summary: "Create new product"})
   @Post('create')
-  async create(@Body() createProductDto: CreateProductDto) {
-    return await this.productsService.create(createProductDto);
+  async create(@UploadedFiles() files: Array<Express.Multer.File>, @Body() createProductDto: ICreateProductDto) {
+    return await this.productsService.create(files, createProductDto);
   }
 
   @ApiQuery({

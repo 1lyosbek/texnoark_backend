@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
+import { ICreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ResData } from 'src/lib/resData';
 import { ProductEntity } from './entities/product.entity';
@@ -20,13 +20,20 @@ export class ProductsService implements IProductService {
     @Inject("IBrandCategoryService") private readonly brandCategoryService: BrandCategoryService,
     @Inject("IProductDetailService") private readonly productDetailService: ProductDetailService
   ) {}
-  async create(createProductDto: CreateProductDto): Promise<ResData<ProductEntity>> {
+  async create(files: Array<Express.Multer.File>, createProductDto: ICreateProductDto): Promise<ResData<ProductEntity>> {
     const { data: foundCategory } = await this.categoryService.findOne(createProductDto.category_id);
     const { data: foundBrand } = await this.brandService.findOne(createProductDto.brand_id);
     const { data: foundBrandCategory } = await this.brandCategoryService.findOneBrandCategory(createProductDto.brand_category_id);
+    const paths = [];
+    for (let i = 0; i < files.length; i++) {
+      const element = files[i];
+      element.path = `https://ecomapi.ilyosbekdev.uz/${element.path}`
+      paths.push(element.path);
+    }
     const newProduct = new ProductEntity();
     newProduct.name = createProductDto.name;
     newProduct.price = createProductDto.price;
+    newProduct.images = paths;
     newProduct.category_id = foundCategory;
     newProduct.brand_id = foundBrand.id;
     newProduct.brand_category_id = foundBrandCategory;
