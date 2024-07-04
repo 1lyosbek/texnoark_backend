@@ -12,7 +12,7 @@ export class CommentRepository implements ICommentRepository {
         return await this.repository.save(comment);
     }
     async getAll(productId: number): Promise<ICommentEntity> {
-        const foundComments = await this.repository.find({where: {product_id: productId}});
+        const foundComments = await this.repository.find({where: {product_id: productId}, relations: ["user_id"]});
         const count = foundComments.length;
         return {comment: foundComments, count};
     }

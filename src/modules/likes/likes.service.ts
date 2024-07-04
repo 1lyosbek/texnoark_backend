@@ -14,8 +14,8 @@ export class LikeService implements ILikeService {
     @Inject("IProductService") private productService: ProductsService,
   ) {}
   async create(createLikeDto: CreateLikeDto, currentUser: UserEntity):Promise<ResData<LikeEntity>> {
-    const { data: foundLike } = await this.findOneByProductId(createLikeDto.product_id);
-    if (foundLike) {
+    const { data: foundLike } = await this.findOneByProductId(createLikeDto.product_id, currentUser.id);
+    if (foundLike && foundLike.user_id == currentUser.id) {
       const deleted = await this.remove(foundLike);
       return deleted; 
     }
@@ -37,8 +37,8 @@ export class LikeService implements ILikeService {
     return new ResData<LikeEntity>("Like found ", 200, foundLike);;
   }
 
-  async findOneByProductId(id: number): Promise<ResData<LikeEntity | null>> {
-    const foundLike = await this.likeRepository.getLikeByProductId(id);
+  async findOneByProductId(product_id: number, user_id: number): Promise<ResData<LikeEntity | null>> {
+    const foundLike = await this.likeRepository.getLikeByProductId(product_id, user_id);
     const resData = new ResData<LikeEntity | null>("Like found by product id", 200, foundLike);
     if (!foundLike) {
       resData.message = "No such product found";

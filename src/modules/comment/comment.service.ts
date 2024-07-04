@@ -12,7 +12,7 @@ export class CommentService implements ICommentService {
   async create(createCommentDto: CreateCommentDto, currentUser: UserEntity):Promise<ResData<CommentEntity>> {
     const newComment = new CommentEntity();
     newComment.comment = createCommentDto.comment;
-    newComment.user_id = currentUser.id;
+    newComment.user_id = currentUser;
     newComment.product_id = createCommentDto.product_id;
     const created = await this.commentRepository.createComment(newComment);
     return new ResData<CommentEntity>("Comment created successfully", 201, created);

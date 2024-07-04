@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/common/database/base.entity';
 import { RoleEnum } from 'src/common/enums/enums';
-import { Entity, Column } from 'typeorm';
+import { CommentEntity } from 'src/modules/comment/entities/comment.entity';
+import { Entity, Column, OneToMany } from 'typeorm';
 
 @Entity("users")
 export class UserEntity extends BaseEntity {
@@ -24,6 +25,9 @@ export class UserEntity extends BaseEntity {
 
     @Column({ name: "hashed_refresh_token", type: 'varchar', nullable: true })
     hashed_refresh_token: string;
+
+    @OneToMany(() => CommentEntity, (commentEntity) => commentEntity.user_id)
+    comments: CommentEntity[];
 }
 
 

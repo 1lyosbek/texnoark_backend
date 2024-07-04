@@ -4,7 +4,7 @@ import { LikeEntity } from "../entities/like.entity";
 export interface ILikeRepository {
     getLikes(id: number): Promise<ILikeEntityCount>;
     getLike(id: number): Promise<LikeEntity>;
-    getLikeByProductId(id: number): Promise<LikeEntity | null>;
+    getLikeByProductId(product_id: number, user_id: number): Promise<LikeEntity | null>;
     createLike(like: LikeEntity): Promise<LikeEntity>;
     deleteLike(like: LikeEntity): Promise<LikeEntity>;
 }

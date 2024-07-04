@@ -8,7 +8,7 @@ import { ProductDetailEntity } from "src/modules/product-detail/entities/product
 export interface ILikeService {
     findAll(id: number): Promise<ResData<ILikeEntityCount>>;
     findOne(id: number): Promise<ResData<LikeEntity>>;
-    findOneByProductId(id: number): Promise<ResData<LikeEntity | null>>;
+    findOneByProductId(product_id: number, user_id: number): Promise<ResData<LikeEntity | null>>;
     create(createLikeDto: CreateLikeDto, currentUser: UserEntity): Promise<ResData<LikeEntity>>;
     remove(entity: LikeEntity): Promise<ResData<LikeEntity>>;
 }

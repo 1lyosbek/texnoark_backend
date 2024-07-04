@@ -16,9 +16,9 @@ export class LikeRepository implements ILikeRepository {
     async getLike(id: number): Promise<LikeEntity> {
         return await this.repository.findOneBy({id})
     }
-    async getLikeByProductId(id: number): Promise<LikeEntity | null> {
-        return await this.repository.findOneBy({product_id: id});
-    }
+    async getLikeByProductId(product_id: number, user_id: number): Promise<LikeEntity | null> {
+        return await this.repository.findOneBy({product_id, user_id});
+    }   
     async deleteLike(entity: LikeEntity): Promise<LikeEntity> {
         return await this.repository.remove(entity);
     }
