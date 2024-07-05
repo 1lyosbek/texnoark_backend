@@ -6,6 +6,7 @@ import { ILikeEntityCount, ILikeRepository } from './interfaces/repository-inter
 import { UserEntity } from '../user/entities/user.entity';
 import { ILikeService } from './interfaces/service-interface';
 import { ProductsService } from '../products/products.service';
+import { ProductRepository } from '../products/products.repository';
 
 @Injectable()
 export class LikeService implements ILikeService {
@@ -22,7 +23,6 @@ export class LikeService implements ILikeService {
     const newLike = new LikeEntity();
     newLike.user_id = currentUser.id;
     newLike.product_id = createLikeDto.product_id;
-    newLike.is_liked = true;
     const created = await this.likeRepository.createLike(newLike);
     return new ResData<LikeEntity>("Like created successfully", 201, created);
   }

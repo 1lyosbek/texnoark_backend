@@ -16,8 +16,13 @@ export class LikeRepository implements ILikeRepository {
     async getLike(id: number): Promise<LikeEntity> {
         return await this.repository.findOneBy({id})
     }
-    async getLikeByProductId(product_id: number, user_id: number): Promise<LikeEntity | null> {
-        return await this.repository.findOneBy({product_id, user_id});
+    async getLikeByProductId(productId: number, userId: number): Promise<LikeEntity | null> {
+    const product = await this.repository.createQueryBuilder('likes')
+       .where('likes.product_id = :productId', { productId })
+       .andWhere('likes.user_id = :userId', { userId })
+       .getOne();
+
+    return product;
     }   
     async deleteLike(entity: LikeEntity): Promise<LikeEntity> {
         return await this.repository.remove(entity);
