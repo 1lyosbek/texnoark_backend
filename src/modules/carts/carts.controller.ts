@@ -1,36 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CartsService } from './carts.service';
+import { Controller, Get, Post, Body, Param, Delete, Inject, ParseIntPipe } from '@nestjs/common';
 import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from 'src/common/decorator/CurrentUser.decorator';
+import { UserEntity } from '../user/entities/user.entity';
+import { ICartService } from './interfaces/service-interface';
+import { Auth } from 'src/common/decorator/auth.decorator';
+import { RoleEnum } from 'src/common/enums/enums';
 
 @ApiTags('carts')
 @Controller('carts')
 export class CartsController {
-  constructor(private readonly cartsService: CartsService) {}
+  constructor(@Inject("ICartService") private readonly cartsService: ICartService) {}
 
-  @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartsService.create(createCartDto);
+  @ApiOperation({summary: "Create new cart"})
+  @Auth(RoleEnum.ADMIN, RoleEnum.USER, RoleEnum.SUPERADMIN)
+  @Post('create')
+  async create(@Body() createCartDto: CreateCartDto, @CurrentUser() currentUser: UserEntity) {
+    return await this.cartsService.create(currentUser, createCartDto);
   }
 
-  @Get()
-  findAll() {
-    return this.cartsService.findAll();
+  @ApiOperation({summary: "Get carts by user id"})
+  @Get('user/:id')
+  async findAll(@Param('id', ParseIntPipe) id: number) {
+    return await this.cartsService.findAll(id);
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartsService.update(+id, updateCartDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartsService.remove(+id);
+  
+  @ApiOperation({summary: "Delete cart by id"})
+  @Delete('delete/:id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    const { data: foundCart } = await this.cartsService.findOne(id);
+    return await this.cartsService.remove(foundCart);
   }
 }

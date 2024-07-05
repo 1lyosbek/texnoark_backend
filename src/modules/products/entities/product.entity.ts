@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/common/database/base.entity';
 import { BrandCategoryEntity } from 'src/modules/brand-category/entities/brand-category.entity';
 import { BrandEntity } from 'src/modules/brand/entities/brand.entity';
+import { CartEntity } from 'src/modules/carts/entities/cart.entity';
 import { CategoryEntity } from 'src/modules/category/entities/category.entity';
 import { LikeEntity } from 'src/modules/likes/entities/like.entity';
 import { StockEntity } from 'src/modules/stock/entities/stock.entity';
@@ -13,7 +14,7 @@ export class ProductEntity extends BaseEntity {
 
     @Column({ name: "price", type: "numeric", nullable: false })
     price: number;
-    
+
     @Column({ name: 'rate', type: 'numeric', nullable: true })
     rate: number;
     
@@ -49,6 +50,9 @@ export class ProductEntity extends BaseEntity {
 
     @OneToMany(() => LikeEntity, (likeEntity) => likeEntity.product_id)
     likes: LikeEntity[];
+
+    @OneToMany(() => CartEntity, (cartEntity) => cartEntity.product_id)
+    carts: CartEntity[];
 }
 
 
