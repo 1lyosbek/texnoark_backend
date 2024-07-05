@@ -1,7 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { IProductEntityCount, IProductRepository } from "./interfaces/repository-interface";
 import { ProductEntity } from "./entities/product.entity";
-import { ILike, Repository } from "typeorm";
+import { ILike, MoreThan, Repository } from "typeorm";
 
 export class ProductRepository implements IProductRepository {
     constructor(@InjectRepository(ProductEntity) private repository: Repository<ProductEntity>) {}
@@ -19,6 +19,15 @@ export class ProductRepository implements IProductRepository {
                 .getRawOne();
             return {products: foundProducts, count: parseInt(count.count, 10)};
         }
+    }
+
+    async getPopular(limit: number, offset: number): Promise<IProductEntityCount> {
+        const foundProducts = await this.repository.find({where: {rate: MoreThan(3)}, skip: offset, take: limit});
+        const count = await this.repository.createQueryBuilder('prducts')
+        .select('COUNT(*) count')
+        .where({rate: MoreThan(3)})
+        .getRawOne();
+        return {products: foundProducts, count: parseInt(count.count, 10)};
     }
     async getByBrandId(brandId: number): Promise<ProductEntity[]> {
         return await this.repository.find({where: {brand_id: brandId}, relations: ['category_id', 'brand_category_id']});

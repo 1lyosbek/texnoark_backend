@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, Query, ParseIntPipe, UseInterceptors, UploadedFiles } from '@nestjs/common';
-import { ICreateProductDto } from './dto/create-product.dto';
+import { CreateRateDto, ICreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/common/decorator/auth.decorator';
@@ -44,6 +44,13 @@ export class ProductsController {
     return await this.productsService.create(files, createProductDto);
   }
 
+  @Auth(RoleEnum.ADMIN, RoleEnum.USER, RoleEnum.SUPERADMIN)
+  @ApiOperation({summary: "Create rate"})
+  @Post('rate')
+  async createRate(@Body() createRateDto: CreateRateDto) {
+    return await this.productsService.createRate(createRateDto);
+  }
+
   @ApiQuery({
     name: 'search',
     required: false,
@@ -66,6 +73,24 @@ export class ProductsController {
   @Get('search')
   async findAll(@Query('search') search: string, @Query('limit') limit: number, @Query('page') page: number) {
     return await this.productsService.findAll(search, limit, page);
+  }
+
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'For limit'
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'For page'
+  })
+  @ApiOperation({ summary: "Get products and search" })
+  @Get('popular')
+  async findPopular(@Query('limit') limit: number, @Query('page') page: number) {
+    return await this.productsService.findPopular(limit, page);
   }
   @ApiOperation({ summary: "Get products by brand id" })
   @Get('brand/:id')

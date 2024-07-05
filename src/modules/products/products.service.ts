@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { ICreateProductDto } from './dto/create-product.dto';
+import { CreateRateDto, ICreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ResData } from 'src/lib/resData';
 import { ProductEntity } from './entities/product.entity';
@@ -41,11 +41,25 @@ export class ProductsService implements IProductService {
     return new ResData<ProductEntity>("Product created successfully", 201, created);
   }
 
+  async createRate(dto: CreateRateDto): Promise<ResData<ProductEntity>> {
+    const {data: foundProduct} = await this.findOne(dto.product_id);
+    foundProduct.product.rate = dto.rate;
+    const updated = await this.productRepository.updateProduct(foundProduct.product);
+    return new ResData<ProductEntity>("Rate created successfully", 200, updated);
+  }
+
   async findAll(word: string, limit: number, page: number): Promise<ResData<IProductEntityCount>>{
     limit = limit > 0 ? limit : 10;
     page = page > 0 ? page : 1;
     page = (page - 1) * limit;
     const foundProducts = await this.productRepository.getProducts(word, limit, page);
+    return new ResData<IProductEntityCount>("Products", 200, {products: foundProducts.products, count: foundProducts.count});
+  }
+  async findPopular(limit: number, page: number): Promise<ResData<IProductEntityCount>>{
+    limit = limit > 0 ? limit : 10;
+    page = page > 0 ? page : 1;
+    page = (page - 1) * limit;
+    const foundProducts = await this.productRepository.getPopular(limit, page);
     return new ResData<IProductEntityCount>("Products", 200, {products: foundProducts.products, count: foundProducts.count});
   }
 

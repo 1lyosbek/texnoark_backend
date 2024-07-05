@@ -3,6 +3,7 @@ import { ProductEntity } from "../entities/product.entity";
 export interface IProductRepository {
     getProducts(word: string, limit: number, page: number): Promise<IProductEntityCount>;
     getProduct(id: number): Promise<ProductEntity>;
+    getPopular(limit: number, page: number): Promise<IProductEntityCount>;
     getByBrandId(brandId: number): Promise<ProductEntity[]>;
     createProduct(entity: ProductEntity): Promise<ProductEntity>;
     updateProduct(entity: ProductEntity): Promise<ProductEntity>;
