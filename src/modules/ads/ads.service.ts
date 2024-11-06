@@ -33,7 +33,7 @@ export class AdsService implements IAdsService {
 
   async update(id: number, file: Express.Multer.File, updateAdDto: IUpdateAdsDto): Promise<ResData<AdsEntity>> {
     const { data : foundAds } = await this.findOne(id);
-    foundAds.image = `https://ecomapi.ilyosbekdev.uz/${file.path}`;
+    foundAds.image = `https://texnoark.ilyosbekdev.uz/${file.path}`;
     foundAds.position = updateAdDto.position;
     const updated = await this.adsRepository.update(foundAds);
     return new ResData<AdsEntity>("Advertisement updated successfully", 200, updated);
