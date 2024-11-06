@@ -27,7 +27,7 @@ export class ProductsService implements IProductService {
     const paths = [];
     for (let i = 0; i < files.length; i++) {
       const element = files[i];
-      element.path = `https://ecomapi.ilyosbekdev.uz/${element.path}`
+      element.path = `https://texnoark.ilyosbekdev.uz/${element.path}`
       paths.push(element.path);
     }
     const newProduct = new ProductEntity();

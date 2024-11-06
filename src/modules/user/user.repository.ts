@@ -25,8 +25,9 @@ export class UserRepository implements IUserRepository {
             return { users: foundUsers, count: parseInt(count.count, 10) };
         }
     }
-    async getUserById(id: number): Promise<UserEntity | null> {
-        return await this.repository.findOneBy({ id: id, role: RoleEnum.USER });
+    async getUserById(userId: number): Promise<UserEntity | null> {
+        const foundUser = await this.repository.findOne({ where: [{ id: userId }, { role: RoleEnum.USER }]});
+        return foundUser;
     }
 
     async getUserAny(id: number): Promise<UserEntity> {
